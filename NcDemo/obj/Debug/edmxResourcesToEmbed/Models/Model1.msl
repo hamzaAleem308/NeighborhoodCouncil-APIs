@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="NeighborhoodCouncilModelStoreContainer" CdmEntityContainer="NeighborhoodCouncilEntities">
+    <EntitySetMapping Name="Admin">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Admin">
+        <MappingFragment StoreEntitySet="Admin">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Announcement_Info">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Announcement_Info">
+        <MappingFragment StoreEntitySet="Announcement_Info">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+          <ScalarProperty Name="Announcement_id" ColumnName="Announcement_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Announcements">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Announcements">
+        <MappingFragment StoreEntitySet="Announcements">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Council">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Council">
+        <MappingFragment StoreEntitySet="Council">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Elections">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Elections">
+        <MappingFragment StoreEntitySet="Elections">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="No_of_Nominations" ColumnName="No_of_Nominations" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="EndData" ColumnName="EndData" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Meeting">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting">
+        <MappingFragment StoreEntitySet="Meeting">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="description" ColumnName="description" />
+          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="date" ColumnName="date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Meeting_Arrangements">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting_Arrangements">
+        <MappingFragment StoreEntitySet="Meeting_Arrangements">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Project_id" ColumnName="Project_id" />
+          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+          <ScalarProperty Name="Meeting_id" ColumnName="Meeting_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Member">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Member">
+        <MappingFragment StoreEntitySet="Member">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+          <ScalarProperty Name="Full_Name" ColumnName="Full_Name" />
+          <ScalarProperty Name="Gender" ColumnName="Gender" />
+          <ScalarProperty Name="DoB" ColumnName="DoB" />
+          <ScalarProperty Name="Province" ColumnName="Province" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="User_Type" ColumnName="User_Type" />
+          <ScalarProperty Name="Date_joined" ColumnName="Date_joined" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Nomination">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Nomination">
+        <MappingFragment StoreEntitySet="Nomination">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Election_id" ColumnName="Election_id" />
+          <ScalarProperty Name="Admin_id" ColumnName="Admin_id" />
+          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Panel">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Panel">
+        <MappingFragment StoreEntitySet="Panel">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Role" ColumnName="Role" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Problems_History">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Problems_History">
+        <MappingFragment StoreEntitySet="Problems_History">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Problem_id" ColumnName="Problem_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Project">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project">
+        <MappingFragment StoreEntitySet="Project">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Budget" ColumnName="Budget" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Project_log">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project_log">
+        <MappingFragment StoreEntitySet="Project_log">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Action_Taken" ColumnName="Action_Taken" />
+          <ScalarProperty Name="Action_Date" ColumnName="Action_Date" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Comments" ColumnName="Comments" />
+          <ScalarProperty Name="AmountCollected" ColumnName="AmountCollected" />
+          <ScalarProperty Name="Feedback" ColumnName="Feedback" />
+          <ScalarProperty Name="Project_id" ColumnName="Project_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Report_Problem">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Report_Problem">
+        <MappingFragment StoreEntitySet="Report_Problem">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="VisualEvidence" ColumnName="VisualEvidence" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Serve">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Serve">
+        <MappingFragment StoreEntitySet="Serve">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Voters_Info">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Voters_Info">
+        <MappingFragment StoreEntitySet="Voters_Info">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Voter_id" ColumnName="Voter_id" />
+          <ScalarProperty Name="Candidate_id" ColumnName="Candidate_id" />
+          <ScalarProperty Name="Election_id" ColumnName="Election_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

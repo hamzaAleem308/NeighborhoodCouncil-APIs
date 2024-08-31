@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="NeighborhoodCouncilModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="Admin">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Council_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Announcement_Info">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Panel_id" Type="int" />
+    <Property Name="Announcement_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Announcements">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="255" />
+    <Property Name="Date" Type="date" />
+    <Property Name="Council_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Council">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="255" />
+    <Property Name="Date" Type="date" />
+  </EntityType>
+  <EntityType Name="Elections">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="No_of_Nominations" Type="int" Nullable="false" />
+    <Property Name="StartDate" Type="datetime" />
+    <Property Name="EndData" Type="datetime" />
+    <Property Name="Council_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Meeting">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="description" Type="nvarchar" MaxLength="255" />
+    <Property Name="Panel_id" Type="int" />
+    <Property Name="Address" Type="nvarchar(max)" />
+    <Property Name="date" Type="date" />
+  </EntityType>
+  <EntityType Name="Meeting_Arrangements">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Project_id" Type="int" />
+    <Property Name="Panel_id" Type="int" />
+    <Property Name="Meeting_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Member">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PhoneNo" Type="nvarchar" MaxLength="30" Nullable="false" />
+    <Property Name="Full_Name" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Gender" Type="char" MaxLength="1" Nullable="false" />
+    <Property Name="DoB" Type="date" Nullable="false" />
+    <Property Name="Province" Type="nvarchar" MaxLength="50" />
+    <Property Name="City" Type="nvarchar" MaxLength="50" />
+    <Property Name="Address" Type="nvarchar" MaxLength="255" />
+    <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="User_Type" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="Date_joined" Type="date" Nullable="false" />
+    <Property Name="Council_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Nomination">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Election_id" Type="int" />
+    <Property Name="Admin_id" Type="int" />
+    <Property Name="Panel_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Panel">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Role" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Council_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Problems_History">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Status" Type="nvarchar" MaxLength="30" />
+    <Property Name="Problem_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Project">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="title" Type="nvarchar" MaxLength="30" />
+    <Property Name="Description" Type="nvarchar" MaxLength="255" />
+    <Property Name="Status" Type="nvarchar" MaxLength="50" />
+    <Property Name="Date" Type="date" />
+    <Property Name="Budget" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Panel_id" Type="int" />
+    <Property Name="Council_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Project_log">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Action_Taken" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="Action_Date" Type="date" />
+    <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Comments" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="AmountCollected" Type="int" />
+    <Property Name="Feedback" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="Project_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Report_Problem">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="title" Type="nvarchar" MaxLength="50" />
+    <Property Name="Description" Type="nvarchar" MaxLength="255" />
+    <Property Name="VisualEvidence" Type="nvarchar(max)" />
+    <Property Name="Status" Type="nvarchar" MaxLength="20" />
+    <Property Name="ProblemType" Type="nvarchar" MaxLength="30" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Date" Type="date" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Serve">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Member_id" Type="int" />
+    <Property Name="Panel_id" Type="int" />
+  </EntityType>
+  <EntityType Name="Voters_Info">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Voter_id" Type="int" />
+    <Property Name="Candidate_id" Type="int" />
+    <Property Name="Election_id" Type="int" />
+  </EntityType>
+  <EntityContainer Name="NeighborhoodCouncilModelStoreContainer">
+    <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Announcements" EntityType="Self.Announcements" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Council" EntityType="Self.Council" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Elections" EntityType="Self.Elections" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Meeting" EntityType="Self.Meeting" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Meeting_Arrangements" EntityType="Self.Meeting_Arrangements" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Project_log" EntityType="Self.Project_log" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Serve" EntityType="Self.Serve" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Voters_Info" EntityType="Self.Voters_Info" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>
