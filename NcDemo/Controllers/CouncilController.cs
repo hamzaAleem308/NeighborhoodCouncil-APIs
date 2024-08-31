@@ -20,5 +20,16 @@ namespace NcDemo.Controllers
             }
             return Request.CreateResponse(HttpStatusCode.OK, chk);
         }
+
+        [HttpPost]
+        public HttpResponseMessage PostCouncils(Council council) {
+            var chk = db.Council.Add(council);
+            if (chk == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            }
+            db.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.OK, chk.Name + "Added Successfully!");
+        }
     }
 }
