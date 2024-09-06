@@ -12,17 +12,11 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Member
+    public partial class CouncilMembers
     {
         public int id { get; set; }
-        public string PhoneNo { get; set; }
-        public string Full_Name { get; set; }
-        public string Gender { get; set; }
-        public System.DateTime DoB { get; set; }
-        public string Province { get; set; }
-        public string City { get; set; }
-        public string Address { get; set; }
-        public string Password { get; set; }
-        public System.DateTime Date_joined { get; set; }
+        public Nullable<int> Member_Id { get; set; }
+        public Nullable<int> Role_Id { get; set; }
+        public Nullable<int> Council_id { get; set; }
     }
 }

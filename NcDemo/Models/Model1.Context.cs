@@ -25,10 +25,10 @@ namespace NcDemo.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Admin> Admin { get; set; }
         public virtual DbSet<Announcement_Info> Announcement_Info { get; set; }
         public virtual DbSet<Announcements> Announcements { get; set; }
         public virtual DbSet<Council> Council { get; set; }
+        public virtual DbSet<CouncilMembers> CouncilMembers { get; set; }
         public virtual DbSet<Elections> Elections { get; set; }
         public virtual DbSet<Meeting> Meeting { get; set; }
         public virtual DbSet<Meeting_Arrangements> Meeting_Arrangements { get; set; }
@@ -39,6 +39,7 @@ namespace NcDemo.Models
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Project_log> Project_log { get; set; }
         public virtual DbSet<Report_Problem> Report_Problem { get; set; }
+        public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Serve> Serve { get; set; }
         public virtual DbSet<Voters_Info> Voters_Info { get; set; }
     }

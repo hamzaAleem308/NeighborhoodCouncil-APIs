@@ -1,15 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
   <EntityContainerMapping StorageEntityContainer="NeighborhoodCouncilModelStoreContainer" CdmEntityContainer="NeighborhoodCouncilEntities">
-    <EntitySetMapping Name="Admin">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Admin">
-        <MappingFragment StoreEntitySet="Admin">
-          <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="Announcement_Info">
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Announcement_Info">
         <MappingFragment StoreEntitySet="Announcement_Info">
@@ -38,6 +29,16 @@
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="Date" ColumnName="Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CouncilMembers">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.CouncilMembers">
+        <MappingFragment StoreEntitySet="CouncilMembers">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
+          <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -87,9 +88,7 @@
           <ScalarProperty Name="City" ColumnName="City" />
           <ScalarProperty Name="Address" ColumnName="Address" />
           <ScalarProperty Name="Password" ColumnName="Password" />
-          <ScalarProperty Name="User_Type" ColumnName="User_Type" />
           <ScalarProperty Name="Date_joined" ColumnName="Date_joined" />
-          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -163,6 +162,14 @@
           <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
           <ScalarProperty Name="Member_id" ColumnName="Member_id" />
           <ScalarProperty Name="Date" ColumnName="Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Role">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Role">
+        <MappingFragment StoreEntitySet="Role">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

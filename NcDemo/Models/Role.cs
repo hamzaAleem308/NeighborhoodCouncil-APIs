@@ -12,10 +12,9 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Admin
+    public partial class Role
     {
         public int id { get; set; }
-        public Nullable<int> Member_id { get; set; }
-        public Nullable<int> Council_id { get; set; }
+        public string Role_Name { get; set; }
     }
 }

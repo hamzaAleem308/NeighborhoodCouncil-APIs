@@ -5,14 +5,6 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
       <Schema Namespace="NeighborhoodCouncilModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Admin">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Member_id" Type="int" />
-          <Property Name="Council_id" Type="int" />
-        </EntityType>
         <EntityType Name="Announcement_Info">
           <Key>
             <PropertyRef Name="id" />
@@ -40,6 +32,15 @@
           <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Description" Type="nvarchar" MaxLength="255" />
           <Property Name="Date" Type="date" />
+        </EntityType>
+        <EntityType Name="CouncilMembers">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Member_Id" Type="int" />
+          <Property Name="Role_Id" Type="int" />
+          <Property Name="Council_id" Type="int" />
         </EntityType>
         <EntityType Name="Elections">
           <Key>
@@ -77,7 +78,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="PhoneNo" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="PhoneNo" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Full_Name" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="Gender" Type="char" MaxLength="1" Nullable="false" />
           <Property Name="DoB" Type="date" Nullable="false" />
@@ -85,9 +86,7 @@
           <Property Name="City" Type="nvarchar" MaxLength="50" />
           <Property Name="Address" Type="nvarchar" MaxLength="255" />
           <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="User_Type" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="Date_joined" Type="date" Nullable="false" />
-          <Property Name="Council_id" Type="int" />
         </EntityType>
         <EntityType Name="Nomination">
           <Key>
@@ -156,6 +155,13 @@
           <Property Name="Member_id" Type="int" />
           <Property Name="Date" Type="date" Nullable="false" />
         </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Role_Name" Type="nvarchar" MaxLength="30" />
+        </EntityType>
         <EntityType Name="Serve">
           <Key>
             <PropertyRef Name="id" />
@@ -174,10 +180,10 @@
           <Property Name="Election_id" Type="int" />
         </EntityType>
         <EntityContainer Name="NeighborhoodCouncilModelStoreContainer">
-          <EntitySet Name="Admin" EntityType="Self.Admin" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Announcements" EntityType="Self.Announcements" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Council" EntityType="Self.Council" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Elections" EntityType="Self.Elections" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meeting" EntityType="Self.Meeting" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meeting_Arrangements" EntityType="Self.Meeting_Arrangements" Schema="dbo" store:Type="Tables" />
@@ -188,6 +194,7 @@
           <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project_log" EntityType="Self.Project_log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Serve" EntityType="Self.Serve" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Voters_Info" EntityType="Self.Voters_Info" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
@@ -196,14 +203,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="NeighborhoodCouncilModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="Admin">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Member_id" Type="Int32" />
-          <Property Name="Council_id" Type="Int32" />
-        </EntityType>
         <EntityType Name="Announcement_Info">
           <Key>
             <PropertyRef Name="id" />
@@ -231,6 +230,15 @@
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Date" Type="DateTime" Precision="0" />
+        </EntityType>
+        <EntityType Name="CouncilMembers">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Member_Id" Type="Int32" />
+          <Property Name="Role_Id" Type="Int32" />
+          <Property Name="Council_id" Type="Int32" />
         </EntityType>
         <EntityType Name="Elections">
           <Key>
@@ -268,7 +276,7 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="PhoneNo" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PhoneNo" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Full_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Gender" Type="String" MaxLength="1" FixedLength="true" Unicode="false" Nullable="false" />
           <Property Name="DoB" Type="DateTime" Nullable="false" Precision="0" />
@@ -276,9 +284,7 @@
           <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="User_Type" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date_joined" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Council_id" Type="Int32" />
         </EntityType>
         <EntityType Name="Nomination">
           <Key>
@@ -347,6 +353,13 @@
           <Property Name="Member_id" Type="Int32" />
           <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
         </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Role_Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
         <EntityType Name="Serve">
           <Key>
             <PropertyRef Name="id" />
@@ -365,10 +378,10 @@
           <Property Name="Election_id" Type="Int32" />
         </EntityType>
         <EntityContainer Name="NeighborhoodCouncilEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Admin" EntityType="Self.Admin" />
           <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" />
           <EntitySet Name="Announcements" EntityType="Self.Announcements" />
           <EntitySet Name="Council" EntityType="Self.Council" />
+          <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" />
           <EntitySet Name="Elections" EntityType="Self.Elections" />
           <EntitySet Name="Meeting" EntityType="Self.Meeting" />
           <EntitySet Name="Meeting_Arrangements" EntityType="Self.Meeting_Arrangements" />
@@ -379,6 +392,7 @@
           <EntitySet Name="Project" EntityType="Self.Project" />
           <EntitySet Name="Project_log" EntityType="Self.Project_log" />
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
+          <EntitySet Name="Role" EntityType="Self.Role" />
           <EntitySet Name="Serve" EntityType="Self.Serve" />
           <EntitySet Name="Voters_Info" EntityType="Self.Voters_Info" />
         </EntityContainer>
@@ -388,15 +402,6 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="NeighborhoodCouncilModelStoreContainer" CdmEntityContainer="NeighborhoodCouncilEntities">
-          <EntitySetMapping Name="Admin">
-            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Admin">
-              <MappingFragment StoreEntitySet="Admin">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-                <ScalarProperty Name="Council_id" ColumnName="Council_id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Announcement_Info">
             <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Announcement_Info">
               <MappingFragment StoreEntitySet="Announcement_Info">
@@ -425,6 +430,16 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CouncilMembers">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.CouncilMembers">
+              <MappingFragment StoreEntitySet="CouncilMembers">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
+                <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
+                <ScalarProperty Name="Council_id" ColumnName="Council_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -474,9 +489,7 @@
                 <ScalarProperty Name="City" ColumnName="City" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
-                <ScalarProperty Name="User_Type" ColumnName="User_Type" />
                 <ScalarProperty Name="Date_joined" ColumnName="Date_joined" />
-                <ScalarProperty Name="Council_id" ColumnName="Council_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -550,6 +563,14 @@
                 <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
                 <ScalarProperty Name="Member_id" ColumnName="Member_id" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Role">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Role">
+              <MappingFragment StoreEntitySet="Role">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

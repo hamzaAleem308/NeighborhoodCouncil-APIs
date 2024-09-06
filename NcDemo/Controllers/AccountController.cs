@@ -36,7 +36,7 @@ namespace NcDemo.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.Unauthorized, "Incorrect password.");
             }
-            return Request.CreateResponse(HttpStatusCode.OK, " " + member.Full_Name);
+            return Request.CreateResponse(HttpStatusCode.OK, member);
         }
 
 
