@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="53cf2b0a0c9f4518a9a575377732dfc4" Name="Diagram1">
+      <Diagram DiagramId="180204d39d694ec790f23f178606aa03" Name="Diagram1">
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Announcement_Info" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Announcements" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Council" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />

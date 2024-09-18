@@ -29,6 +29,7 @@
           <ScalarProperty Name="Name" ColumnName="Name" />
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="JoinCode" ColumnName="JoinCode" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

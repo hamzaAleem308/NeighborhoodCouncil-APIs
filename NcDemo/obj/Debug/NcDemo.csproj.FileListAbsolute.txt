@@ -1,10 +1,11 @@
+E:\APIs\NcDemo\NcDemo\bin\roslyn\csi.exe
+E:\APIs\NcDemo\NcDemo\bin\roslyn\vbc.exe
 E:\APIs\NcDemo\NcDemo\bin\NcDemo.dll.config
 E:\APIs\NcDemo\NcDemo\bin\NcDemo.dll
 E:\APIs\NcDemo\NcDemo\bin\NcDemo.pdb
 E:\APIs\NcDemo\NcDemo\bin\roslyn\csc.exe
 E:\APIs\NcDemo\NcDemo\bin\roslyn\csc.exe.config
 E:\APIs\NcDemo\NcDemo\bin\roslyn\csc.rsp
-E:\APIs\NcDemo\NcDemo\bin\roslyn\csi.exe
 E:\APIs\NcDemo\NcDemo\bin\roslyn\csi.exe.config
 E:\APIs\NcDemo\NcDemo\bin\roslyn\csi.rsp
 E:\APIs\NcDemo\NcDemo\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
@@ -45,7 +46,6 @@ E:\APIs\NcDemo\NcDemo\bin\roslyn\System.Xml.ReaderWriter.dll
 E:\APIs\NcDemo\NcDemo\bin\roslyn\System.Xml.XmlDocument.dll
 E:\APIs\NcDemo\NcDemo\bin\roslyn\System.Xml.XPath.dll
 E:\APIs\NcDemo\NcDemo\bin\roslyn\System.Xml.XPath.XDocument.dll
-E:\APIs\NcDemo\NcDemo\bin\roslyn\vbc.exe
 E:\APIs\NcDemo\NcDemo\bin\roslyn\vbc.exe.config
 E:\APIs\NcDemo\NcDemo\bin\roslyn\vbc.rsp
 E:\APIs\NcDemo\NcDemo\bin\roslyn\VBCSCompiler.exe
