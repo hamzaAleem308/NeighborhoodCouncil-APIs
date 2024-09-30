@@ -38,8 +38,10 @@
         <MappingFragment StoreEntitySet="CouncilMembers">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
+          <ScalarProperty Name="Council_Id" ColumnName="Council_Id" />
+          <ScalarProperty Name="is_candidate" ColumnName="is_candidate" />
           <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
-          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+          <ScalarProperty Name="Panel_Id" ColumnName="Panel_Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -48,9 +50,9 @@
         <MappingFragment StoreEntitySet="Elections">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="No_of_Nominations" ColumnName="No_of_Nominations" />
+          <ScalarProperty Name="status" ColumnName="status" />
           <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-          <ScalarProperty Name="EndData" ColumnName="EndData" />
+          <ScalarProperty Name="EndDate" ColumnName="EndDate" />
           <ScalarProperty Name="Council_id" ColumnName="Council_id" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -99,7 +101,6 @@
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Member_id" ColumnName="Member_id" />
           <ScalarProperty Name="Election_id" ColumnName="Election_id" />
-          <ScalarProperty Name="Admin_id" ColumnName="Admin_id" />
           <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -108,9 +109,18 @@
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Panel">
         <MappingFragment StoreEntitySet="Panel">
           <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-          <ScalarProperty Name="Role" ColumnName="Role" />
-          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+          <ScalarProperty Name="Candidate_Id" ColumnName="Candidate_Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Election_Id" ColumnName="Election_Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PanelMembers">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.PanelMembers">
+        <MappingFragment StoreEntitySet="PanelMembers">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Panel_Id" ColumnName="Panel_Id" />
+          <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -183,13 +193,14 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Voters_Info">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Voters_Info">
-        <MappingFragment StoreEntitySet="Voters_Info">
+    <EntitySetMapping Name="Votes">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Votes">
+        <MappingFragment StoreEntitySet="Votes">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Voter_id" ColumnName="Voter_id" />
           <ScalarProperty Name="Candidate_id" ColumnName="Candidate_id" />
           <ScalarProperty Name="Election_id" ColumnName="Election_id" />
+          <ScalarProperty Name="Vote_date" ColumnName="Vote_date" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

@@ -12,11 +12,12 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Panel
+    public partial class Votes
     {
         public int id { get; set; }
-        public Nullable<int> Candidate_Id { get; set; }
-        public string Name { get; set; }
-        public Nullable<int> Election_Id { get; set; }
+        public Nullable<int> Voter_id { get; set; }
+        public Nullable<int> Candidate_id { get; set; }
+        public Nullable<int> Election_id { get; set; }
+        public Nullable<System.DateTime> Vote_date { get; set; }
     }
 }

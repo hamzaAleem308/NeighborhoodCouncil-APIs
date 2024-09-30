@@ -41,21 +41,43 @@ namespace NcDemo.Controllers
         [HttpGet]
         public HttpResponseMessage GetCouncil(int councilId)
         {
-            try
+            try { 
+                var council = db.Council.Find(councilId);
+            if (council == null)
             {
-                var council = db.Council.Where(p => p.id == councilId);
-
-                if (!council.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found");
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, council);
+                return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-            catch (Exception ee)
+            return Request.CreateResponse(HttpStatusCode.OK, council);
+        }
+            catch(Exception ee)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
+
+        [HttpGet]
+        public HttpResponseMessage CountCouncilMembers(int councilId)
+        {
+            try
+            {
+                var memberCount = db.CouncilMembers
+                                    .Where(cm => cm.Council_Id == councilId)
+                                    .Count();
+
+                if (memberCount == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "No members found for this Council!");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { MemberCount = memberCount });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }
+
+
 
         [HttpGet]
         public HttpResponseMessage GetCouncils(int memberId)
@@ -70,7 +92,7 @@ namespace NcDemo.Controllers
                 }
 
                 // Extract council ids 
-                var councilIds = councilMemberships.Select(cm => cm.Council_id).ToList();
+                var councilIds = councilMemberships.Select(cm => cm.Council_Id).ToList();
 
                 // Fetch councils that match the council ids
                 var councils = db.Council.Where(c => councilIds.Contains(c.id)).ToList();
@@ -90,10 +112,10 @@ namespace NcDemo.Controllers
         [HttpGet]
         public HttpResponseMessage GetUserType(int memberId, int councilId)
         {
-            // Get the member's role for the given council
+            // Get the member's role
             var memberRole = (from cm in db.CouncilMembers
                               join r in db.Role on cm.Role_Id equals r.id
-                              where cm.Member_Id == memberId && cm.Council_id == councilId
+                              where cm.Member_Id == memberId && cm.Council_Id == councilId
                               select r.Role_Name).FirstOrDefault();
 
             if (memberRole == null)
@@ -117,9 +139,11 @@ namespace NcDemo.Controllers
                
                 CouncilMembers councilMember = new CouncilMembers
                 {
-                    Council_id = council.id,  
-                    Member_Id = memberId,     
-                    Role_Id = 1    // ID: 1 == 'Admin'       
+                    Member_Id = memberId,
+                    Council_Id = council.id,
+                    is_candidate = 0,
+                    Role_Id = 1,   // Id: 1 == 'Admin'
+                    Panel_Id = 0,
                 };
 
               
@@ -134,23 +158,23 @@ namespace NcDemo.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
             }
         }
-
         [HttpPost]
         public HttpResponseMessage JoinCouncilUsingCode(int memberId, string joinCode)
         {
             try
             {
-                var getJoinCode = db.Council.Where(p => p.JoinCode.Equals(joinCode));
+                var getCouncil = db.Council
+                    .Where(c => c.JoinCode.Equals(joinCode))
+                    .Select(c => c.id)
+                    .FirstOrDefault();
 
-                if (!getJoinCode.Any())
+                if (getCouncil == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found with this Join Code");
                 }
 
-                var getCouncil = getJoinCode.Select(gc => gc.id).FirstOrDefault();
-
                 var existingMember = db.CouncilMembers
-                    .Where(cm => cm.Council_id == getCouncil && cm.Member_Id == memberId)
+                    .Where(cm => cm.Council_Id == getCouncil && cm.Member_Id == memberId)
                     .FirstOrDefault();
 
                 if (existingMember != null)
@@ -160,9 +184,11 @@ namespace NcDemo.Controllers
 
                 CouncilMembers councilMember = new CouncilMembers
                 {
-                    Council_id = getCouncil,
                     Member_Id = memberId,
-                    Role_Id = 2    // ID: 2 == 'Member'       
+                    Council_Id = getCouncil,
+                    is_candidate = 0,
+                    Role_Id = 2 ,   // Id: 2 == 'Member'
+                    Panel_Id = 0,
                 };
 
                 db.CouncilMembers.Add(councilMember);
@@ -170,10 +196,11 @@ namespace NcDemo.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, "Council Joined Successfully");
             }
-            catch (Exception ee)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
     }
-    }
+}

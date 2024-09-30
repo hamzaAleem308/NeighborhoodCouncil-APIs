@@ -35,12 +35,13 @@ namespace NcDemo.Models
         public virtual DbSet<Member> Member { get; set; }
         public virtual DbSet<Nomination> Nomination { get; set; }
         public virtual DbSet<Panel> Panel { get; set; }
+        public virtual DbSet<PanelMembers> PanelMembers { get; set; }
         public virtual DbSet<Problems_History> Problems_History { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Project_log> Project_log { get; set; }
         public virtual DbSet<Report_Problem> Report_Problem { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Serve> Serve { get; set; }
-        public virtual DbSet<Voters_Info> Voters_Info { get; set; }
+        public virtual DbSet<Votes> Votes { get; set; }
     }
 }

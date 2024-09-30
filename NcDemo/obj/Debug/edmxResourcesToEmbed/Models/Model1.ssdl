@@ -35,8 +35,10 @@
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Member_Id" Type="int" />
-    <Property Name="Role_Id" Type="int" />
-    <Property Name="Council_id" Type="int" />
+    <Property Name="Council_Id" Type="int" />
+    <Property Name="is_candidate" Type="tinyint" />
+    <Property Name="Role_Id" Type="int" Nullable="false" />
+    <Property Name="Panel_Id" Type="int" />
   </EntityType>
   <EntityType Name="Elections">
     <Key>
@@ -44,9 +46,9 @@
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Name" Type="nvarchar" MaxLength="100" Nullable="false" />
-    <Property Name="No_of_Nominations" Type="int" Nullable="false" />
+    <Property Name="status" Type="nvarchar" MaxLength="30" />
     <Property Name="StartDate" Type="datetime" />
-    <Property Name="EndData" Type="datetime" />
+    <Property Name="EndDate" Type="datetime" />
     <Property Name="Council_id" Type="int" />
   </EntityType>
   <EntityType Name="Meeting">
@@ -91,7 +93,6 @@
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Member_id" Type="int" />
     <Property Name="Election_id" Type="int" />
-    <Property Name="Admin_id" Type="int" />
     <Property Name="Panel_id" Type="int" />
   </EntityType>
   <EntityType Name="Panel">
@@ -99,9 +100,17 @@
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Member_id" Type="int" />
-    <Property Name="Role" Type="nvarchar" MaxLength="50" Nullable="false" />
-    <Property Name="Council_id" Type="int" />
+    <Property Name="Candidate_Id" Type="int" />
+    <Property Name="Name" Type="varchar" MaxLength="255" />
+    <Property Name="Election_Id" Type="int" />
+  </EntityType>
+  <EntityType Name="PanelMembers">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Panel_Id" Type="int" />
+    <Property Name="Member_Id" Type="int" />
   </EntityType>
   <EntityType Name="Problems_History">
     <Key>
@@ -166,7 +175,7 @@
     <Property Name="Member_id" Type="int" />
     <Property Name="Panel_id" Type="int" />
   </EntityType>
-  <EntityType Name="Voters_Info">
+  <EntityType Name="Votes">
     <Key>
       <PropertyRef Name="id" />
     </Key>
@@ -174,6 +183,7 @@
     <Property Name="Voter_id" Type="int" />
     <Property Name="Candidate_id" Type="int" />
     <Property Name="Election_id" Type="int" />
+    <Property Name="Vote_date" Type="datetime" />
   </EntityType>
   <EntityContainer Name="NeighborhoodCouncilModelStoreContainer">
     <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" Schema="dbo" store:Type="Tables" />
@@ -186,12 +196,13 @@
     <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Project_log" EntityType="Self.Project_log" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Serve" EntityType="Self.Serve" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Voters_Info" EntityType="Self.Voters_Info" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Votes" EntityType="Self.Votes" Schema="dbo" store:Type="Tables" />
   </EntityContainer>
 </Schema>

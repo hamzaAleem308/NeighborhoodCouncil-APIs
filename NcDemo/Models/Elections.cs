@@ -16,9 +16,9 @@ namespace NcDemo.Models
     {
         public int id { get; set; }
         public string Name { get; set; }
-        public int No_of_Nominations { get; set; }
+        public string status { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
-        public Nullable<System.DateTime> EndData { get; set; }
+        public Nullable<System.DateTime> EndDate { get; set; }
         public Nullable<int> Council_id { get; set; }
     }
 }

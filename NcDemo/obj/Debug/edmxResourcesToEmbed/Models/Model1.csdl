@@ -35,8 +35,10 @@
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Member_Id" Type="Int32" />
-    <Property Name="Role_Id" Type="Int32" />
-    <Property Name="Council_id" Type="Int32" />
+    <Property Name="Council_Id" Type="Int32" />
+    <Property Name="is_candidate" Type="Byte" />
+    <Property Name="Role_Id" Type="Int32" Nullable="false" />
+    <Property Name="Panel_Id" Type="Int32" />
   </EntityType>
   <EntityType Name="Elections">
     <Key>
@@ -44,9 +46,9 @@
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="No_of_Nominations" Type="Int32" Nullable="false" />
+    <Property Name="status" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
     <Property Name="StartDate" Type="DateTime" Precision="3" />
-    <Property Name="EndData" Type="DateTime" Precision="3" />
+    <Property Name="EndDate" Type="DateTime" Precision="3" />
     <Property Name="Council_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Meeting">
@@ -91,7 +93,6 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Member_id" Type="Int32" />
     <Property Name="Election_id" Type="Int32" />
-    <Property Name="Admin_id" Type="Int32" />
     <Property Name="Panel_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Panel">
@@ -99,9 +100,17 @@
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Member_id" Type="Int32" />
-    <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-    <Property Name="Council_id" Type="Int32" />
+    <Property Name="Candidate_Id" Type="Int32" />
+    <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="Election_Id" Type="Int32" />
+  </EntityType>
+  <EntityType Name="PanelMembers">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Panel_Id" Type="Int32" />
+    <Property Name="Member_Id" Type="Int32" />
   </EntityType>
   <EntityType Name="Problems_History">
     <Key>
@@ -166,7 +175,7 @@
     <Property Name="Member_id" Type="Int32" />
     <Property Name="Panel_id" Type="Int32" />
   </EntityType>
-  <EntityType Name="Voters_Info">
+  <EntityType Name="Votes">
     <Key>
       <PropertyRef Name="id" />
     </Key>
@@ -174,6 +183,7 @@
     <Property Name="Voter_id" Type="Int32" />
     <Property Name="Candidate_id" Type="Int32" />
     <Property Name="Election_id" Type="Int32" />
+    <Property Name="Vote_date" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityContainer Name="NeighborhoodCouncilEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" />
@@ -186,12 +196,13 @@
     <EntitySet Name="Member" EntityType="Self.Member" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" />
     <EntitySet Name="Panel" EntityType="Self.Panel" />
+    <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" />
     <EntitySet Name="Project" EntityType="Self.Project" />
     <EntitySet Name="Project_log" EntityType="Self.Project_log" />
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
     <EntitySet Name="Role" EntityType="Self.Role" />
     <EntitySet Name="Serve" EntityType="Self.Serve" />
-    <EntitySet Name="Voters_Info" EntityType="Self.Voters_Info" />
+    <EntitySet Name="Votes" EntityType="Self.Votes" />
   </EntityContainer>
 </Schema>

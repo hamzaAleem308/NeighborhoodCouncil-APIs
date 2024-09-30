@@ -17,7 +17,6 @@ namespace NcDemo.Models
         public int id { get; set; }
         public Nullable<int> Member_id { get; set; }
         public Nullable<int> Election_id { get; set; }
-        public Nullable<int> Admin_id { get; set; }
         public Nullable<int> Panel_id { get; set; }
     }
 }
