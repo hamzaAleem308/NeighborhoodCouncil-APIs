@@ -24,6 +24,16 @@
           <Property Name="Date" Type="date" />
           <Property Name="Council_id" Type="int" />
         </EntityType>
+        <EntityType Name="Candidates">
+          <Key>
+            <PropertyRef Name="candidate_id" />
+          </Key>
+          <Property Name="candidate_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="member_id" Type="int" />
+          <Property Name="election_id" Type="int" />
+          <Property Name="panel_id" Type="int" />
+          <Property Name="created_at" Type="datetime" />
+        </EntityType>
         <EntityType Name="Council">
           <Key>
             <PropertyRef Name="id" />
@@ -41,7 +51,6 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Member_Id" Type="int" />
           <Property Name="Council_Id" Type="int" />
-          <Property Name="is_candidate" Type="tinyint" />
           <Property Name="Role_Id" Type="int" Nullable="false" />
           <Property Name="Panel_Id" Type="int" />
         </EntityType>
@@ -193,6 +202,7 @@
         <EntityContainer Name="NeighborhoodCouncilModelStoreContainer">
           <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Announcements" EntityType="Self.Announcements" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Candidates" EntityType="Self.Candidates" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Council" EntityType="Self.Council" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Elections" EntityType="Self.Elections" Schema="dbo" store:Type="Tables" />
@@ -234,6 +244,16 @@
           <Property Name="Date" Type="DateTime" Precision="0" />
           <Property Name="Council_id" Type="Int32" />
         </EntityType>
+        <EntityType Name="Candidates">
+          <Key>
+            <PropertyRef Name="candidate_id" />
+          </Key>
+          <Property Name="candidate_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="member_id" Type="Int32" />
+          <Property Name="election_id" Type="Int32" />
+          <Property Name="panel_id" Type="Int32" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="Council">
           <Key>
             <PropertyRef Name="id" />
@@ -251,7 +271,6 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Member_Id" Type="Int32" />
           <Property Name="Council_Id" Type="Int32" />
-          <Property Name="is_candidate" Type="Byte" />
           <Property Name="Role_Id" Type="Int32" Nullable="false" />
           <Property Name="Panel_Id" Type="Int32" />
         </EntityType>
@@ -403,6 +422,7 @@
         <EntityContainer Name="NeighborhoodCouncilEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" />
           <EntitySet Name="Announcements" EntityType="Self.Announcements" />
+          <EntitySet Name="Candidates" EntityType="Self.Candidates" />
           <EntitySet Name="Council" EntityType="Self.Council" />
           <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" />
           <EntitySet Name="Elections" EntityType="Self.Elections" />
@@ -447,6 +467,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Candidates">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Candidates">
+              <MappingFragment StoreEntitySet="Candidates">
+                <ScalarProperty Name="candidate_id" ColumnName="candidate_id" />
+                <ScalarProperty Name="member_id" ColumnName="member_id" />
+                <ScalarProperty Name="election_id" ColumnName="election_id" />
+                <ScalarProperty Name="panel_id" ColumnName="panel_id" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Council">
             <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Council">
               <MappingFragment StoreEntitySet="Council">
@@ -464,7 +495,6 @@
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
                 <ScalarProperty Name="Council_Id" ColumnName="Council_Id" />
-                <ScalarProperty Name="is_candidate" ColumnName="is_candidate" />
                 <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
                 <ScalarProperty Name="Panel_Id" ColumnName="Panel_Id" />
               </MappingFragment>

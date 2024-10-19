@@ -19,6 +19,16 @@
     <Property Name="Date" Type="DateTime" Precision="0" />
     <Property Name="Council_id" Type="Int32" />
   </EntityType>
+  <EntityType Name="Candidates">
+    <Key>
+      <PropertyRef Name="candidate_id" />
+    </Key>
+    <Property Name="candidate_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="member_id" Type="Int32" />
+    <Property Name="election_id" Type="Int32" />
+    <Property Name="panel_id" Type="Int32" />
+    <Property Name="created_at" Type="DateTime" Precision="3" />
+  </EntityType>
   <EntityType Name="Council">
     <Key>
       <PropertyRef Name="id" />
@@ -36,7 +46,6 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Member_Id" Type="Int32" />
     <Property Name="Council_Id" Type="Int32" />
-    <Property Name="is_candidate" Type="Byte" />
     <Property Name="Role_Id" Type="Int32" Nullable="false" />
     <Property Name="Panel_Id" Type="Int32" />
   </EntityType>
@@ -188,6 +197,7 @@
   <EntityContainer Name="NeighborhoodCouncilEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="Announcement_Info" EntityType="Self.Announcement_Info" />
     <EntitySet Name="Announcements" EntityType="Self.Announcements" />
+    <EntitySet Name="Candidates" EntityType="Self.Candidates" />
     <EntitySet Name="Council" EntityType="Self.Council" />
     <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" />
     <EntitySet Name="Elections" EntityType="Self.Elections" />

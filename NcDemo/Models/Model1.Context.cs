@@ -27,6 +27,7 @@ namespace NcDemo.Models
     
         public virtual DbSet<Announcement_Info> Announcement_Info { get; set; }
         public virtual DbSet<Announcements> Announcements { get; set; }
+        public virtual DbSet<Candidates> Candidates { get; set; }
         public virtual DbSet<Council> Council { get; set; }
         public virtual DbSet<CouncilMembers> CouncilMembers { get; set; }
         public virtual DbSet<Elections> Elections { get; set; }

@@ -176,6 +176,9 @@
     <Compile Include="Models\Announcement_Info.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Candidates.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Council.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

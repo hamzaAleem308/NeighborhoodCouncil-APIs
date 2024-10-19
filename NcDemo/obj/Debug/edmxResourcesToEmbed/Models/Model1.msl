@@ -22,6 +22,17 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Candidates">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Candidates">
+        <MappingFragment StoreEntitySet="Candidates">
+          <ScalarProperty Name="candidate_id" ColumnName="candidate_id" />
+          <ScalarProperty Name="member_id" ColumnName="member_id" />
+          <ScalarProperty Name="election_id" ColumnName="election_id" />
+          <ScalarProperty Name="panel_id" ColumnName="panel_id" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Council">
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Council">
         <MappingFragment StoreEntitySet="Council">
@@ -39,7 +50,6 @@
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
           <ScalarProperty Name="Council_Id" ColumnName="Council_Id" />
-          <ScalarProperty Name="is_candidate" ColumnName="is_candidate" />
           <ScalarProperty Name="Role_Id" ColumnName="Role_Id" />
           <ScalarProperty Name="Panel_Id" ColumnName="Panel_Id" />
         </MappingFragment>

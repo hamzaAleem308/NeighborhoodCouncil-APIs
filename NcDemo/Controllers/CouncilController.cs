@@ -1,4 +1,5 @@
-﻿using NcDemo.Models;
+﻿using Microsoft.Ajax.Utilities;
+using NcDemo.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -15,7 +16,6 @@ namespace NcDemo.Controllers
         NeighborhoodCouncilEntities db = new NeighborhoodCouncilEntities();
 
         [HttpGet]
-
         public HttpResponseMessage GetCouncilJoinCode(int councilId)
         {
             try
@@ -141,7 +141,6 @@ namespace NcDemo.Controllers
                 {
                     Member_Id = memberId,
                     Council_Id = council.id,
-                    is_candidate = 0,
                     Role_Id = 1,   // Id: 1 == 'Admin'
                     Panel_Id = 0,
                 };
@@ -158,6 +157,7 @@ namespace NcDemo.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
             }
         }
+
         [HttpPost]
         public HttpResponseMessage JoinCouncilUsingCode(int memberId, string joinCode)
         {
@@ -186,7 +186,6 @@ namespace NcDemo.Controllers
                 {
                     Member_Id = memberId,
                     Council_Id = getCouncil,
-                    is_candidate = 0,
                     Role_Id = 2 ,   // Id: 2 == 'Member'
                     Panel_Id = 0,
                 };
@@ -202,5 +201,31 @@ namespace NcDemo.Controllers
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetCouncilMembers(int councilId)
+        {
+            try
+            {
+                var members = (from cm in db.CouncilMembers
+                               join m in db.Member on cm.Member_Id equals m.id
+                               where cm.Council_Id == councilId && cm.Panel_Id == 0 && cm.Role_Id != 1
+                               select new
+                               {
+                                   MembersId = m.id,
+                                   MembersName = m.Full_Name
+                               }).ToList();
+
+                if (members == null || !members.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No members available for this Council Id.");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, members);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }
     }
 }
