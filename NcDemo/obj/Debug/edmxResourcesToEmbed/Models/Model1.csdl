@@ -6,7 +6,7 @@
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Member_id" Type="Int32" />
-    <Property Name="Panel_id" Type="Int32" />
+    <Property Name="Council_id" Type="Int32" />
     <Property Name="Announcement_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Announcements">
@@ -17,7 +17,6 @@
     <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="Date" Type="DateTime" Precision="0" />
-    <Property Name="Council_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Candidates">
     <Key>

@@ -6,7 +6,7 @@
         <MappingFragment StoreEntitySet="Announcement_Info">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
           <ScalarProperty Name="Announcement_id" ColumnName="Announcement_id" />
         </MappingFragment>
       </EntityTypeMapping>
@@ -18,7 +18,6 @@
           <ScalarProperty Name="title" ColumnName="title" />
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="Date" ColumnName="Date" />
-          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

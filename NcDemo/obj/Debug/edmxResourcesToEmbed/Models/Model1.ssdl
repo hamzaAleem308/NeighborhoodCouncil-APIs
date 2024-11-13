@@ -6,7 +6,7 @@
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Member_id" Type="int" />
-    <Property Name="Panel_id" Type="int" />
+    <Property Name="Council_id" Type="int" />
     <Property Name="Announcement_id" Type="int" />
   </EntityType>
   <EntityType Name="Announcements">
@@ -17,7 +17,6 @@
     <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="Description" Type="nvarchar" MaxLength="255" />
     <Property Name="Date" Type="date" />
-    <Property Name="Council_id" Type="int" />
   </EntityType>
   <EntityType Name="Candidates">
     <Key>

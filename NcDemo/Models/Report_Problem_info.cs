@@ -12,11 +12,11 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Announcements
+    public partial class Report_Problem_info
     {
         public int id { get; set; }
-        public string title { get; set; }
-        public string Description { get; set; }
-        public Nullable<System.DateTime> Date { get; set; }
+        public int Report_Problem_id { get; set; }
+        public int Member_id { get; set; }
+        public int Council_id { get; set; }
     }
 }

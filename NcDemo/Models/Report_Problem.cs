@@ -20,7 +20,7 @@ namespace NcDemo.Models
         public string VisualEvidence { get; set; }
         public string Status { get; set; }
         public string ProblemType { get; set; }
-        public Nullable<int> Member_id { get; set; }
-        public System.DateTime Date { get; set; }
+        public string Category { get; set; }
+        public Nullable<System.DateTime> CreatedAt { get; set; }
     }
 }

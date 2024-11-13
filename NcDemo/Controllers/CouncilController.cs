@@ -133,14 +133,26 @@ namespace NcDemo.Controllers
         {
             try
             { 
-                db.Council.Add(council);
-                db.SaveChanges(); 
+                Council council1 = new Council()
+                {
+                    Name = council.Name,
+                    Description = council.Description,
+                    Date = DateTime.Now,
+                };
+                db.Council.Add(council1);
+                db.SaveChanges();
 
+                var setCode = db.Council.FirstOrDefault(cm => cm.id == council1.id);
+
+                if(setCode != null)
+                {
+                    setCode.JoinCode = CodeGenerator.GenerateJoinCode(council1.id);
+                }
                
                 CouncilMembers councilMember = new CouncilMembers
                 {
                     Member_Id = memberId,
-                    Council_Id = council.id,
+                    Council_Id = council1.id,
                     Role_Id = 1,   // Id: 1 == 'Admin'
                     Panel_Id = 0,
                 };
@@ -215,7 +227,7 @@ namespace NcDemo.Controllers
                                    MembersName = m.Full_Name
                                }).ToList();
 
-                if (members == null || !members.Any())
+                if (members == null )
                 {
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No members available for this Council Id.");
                 }
