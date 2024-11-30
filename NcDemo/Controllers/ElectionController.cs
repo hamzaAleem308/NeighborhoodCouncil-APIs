@@ -395,7 +395,82 @@ namespace NcDemo.Controllers
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetElectionForVotes(int councilId)
+        {
+            try
+            {
+                var election = db.Elections
+                    .Where(e => e.Council_id == councilId)
+                    .Select(e => new
+                    {
+                        ElectionId = e.id,
+                        ElectionName = e.Name,
+                        Status = e.status,
+                        Candidates = db.Candidates
+                            .Where(c => c.election_id == e.id)
+                            .Select(c => new
+                            {
+                                CandidateId = c.candidate_id,
+                                CandidateName = db.Member
+                                                .Where(m => m.id == c.member_id)
+                                                .Select(m => m.Full_Name)
+                                                .FirstOrDefault()
+                            }).ToList()
+                    }).FirstOrDefault();
 
+                if (election == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Election not found");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, election);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public HttpResponseMessage CastVote(Votes model)
+        {
+            try
+            {
+                // Check if the election is active
+                var election = db.Elections.FirstOrDefault(e => e.id == model.Election_id && e.status == "Active");
+                if (election == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Election is not active or doesn't exist.");
+                }
+
+                // Check if voter has already voted in this election
+                var existingVote = db.Votes.FirstOrDefault(v => v.Voter_id == model.Voter_id && v.Election_id == model.Election_id);
+                if (existingVote != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "You have already voted in this election.");
+                }
+
+                // Record the vote
+                var newVote = new Votes
+                {
+                    Voter_id = model.Voter_id,
+                    Candidate_id = model.Candidate_id,
+                    Election_id = model.Election_id,
+                    Vote_date = DateTime.Now
+                };
+
+                db.Votes.Add(newVote);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.Created, "Vote cast successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred while casting the vote: " + ex.Message);
+            }
+        }
 
     }
 }

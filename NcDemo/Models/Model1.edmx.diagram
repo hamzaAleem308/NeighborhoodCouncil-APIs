@@ -4,22 +4,22 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7998f8bd696542b0a43e71b2386d961d" Name="Diagram1">
+      <Diagram DiagramId="be411d44f8a34b6b94321897e4672788" Name="Diagram1">
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Announcement_Info" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Announcements" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Candidates" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Council" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.CouncilMembers" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Elections" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Meeting" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Meeting_Arrangements" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Meeting_Minutes" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Meetings" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Member" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Nomination" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Panel" Width="1.5" PointX="4.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.PanelMembers" Width="1.5" PointX="6.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Problems_History" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Project" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Project_log" Width="1.5" PointX="8.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Project_Logs" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="NeighborhoodCouncilModel.Projects" Width="1.5" PointX="8.75" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Report_Problem" Width="1.5" PointX="4.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Report_Problem_info" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="NeighborhoodCouncilModel.Role" Width="1.5" PointX="0.75" PointY="10.75" IsExpanded="true" />

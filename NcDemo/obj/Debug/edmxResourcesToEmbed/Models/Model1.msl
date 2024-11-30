@@ -66,25 +66,28 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Meeting">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting">
-        <MappingFragment StoreEntitySet="Meeting">
+    <EntitySetMapping Name="Meeting_Minutes">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting_Minutes">
+        <MappingFragment StoreEntitySet="Meeting_Minutes">
           <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="title" ColumnName="title" />
-          <ScalarProperty Name="description" ColumnName="description" />
-          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
-          <ScalarProperty Name="Address" ColumnName="Address" />
-          <ScalarProperty Name="date" ColumnName="date" />
+          <ScalarProperty Name="meeting_id" ColumnName="meeting_id" />
+          <ScalarProperty Name="minutes" ColumnName="minutes" />
+          <ScalarProperty Name="recorded_by" ColumnName="recorded_by" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Meeting_Arrangements">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting_Arrangements">
-        <MappingFragment StoreEntitySet="Meeting_Arrangements">
+    <EntitySetMapping Name="Meetings">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meetings">
+        <MappingFragment StoreEntitySet="Meetings">
           <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="Project_id" ColumnName="Project_id" />
-          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
-          <ScalarProperty Name="Meeting_id" ColumnName="Meeting_id" />
+          <ScalarProperty Name="council_id" ColumnName="council_id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="description" ColumnName="description" />
+          <ScalarProperty Name="address" ColumnName="address" />
+          <ScalarProperty Name="scheduled_date" ColumnName="scheduled_date" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="meeting_type" ColumnName="meeting_type" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -142,32 +145,34 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Project">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project">
-        <MappingFragment StoreEntitySet="Project">
+    <EntitySetMapping Name="Project_Logs">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project_Logs">
+        <MappingFragment StoreEntitySet="Project_Logs">
           <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="title" ColumnName="title" />
-          <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="Status" ColumnName="Status" />
-          <ScalarProperty Name="Date" ColumnName="Date" />
-          <ScalarProperty Name="Budget" ColumnName="Budget" />
-          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
-          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+          <ScalarProperty Name="project_id" ColumnName="project_id" />
+          <ScalarProperty Name="action_taken" ColumnName="action_taken" />
+          <ScalarProperty Name="action_date" ColumnName="action_date" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="comments" ColumnName="comments" />
+          <ScalarProperty Name="amount_spent" ColumnName="amount_spent" />
+          <ScalarProperty Name="feedback" ColumnName="feedback" />
+          <ScalarProperty Name="logged_by" ColumnName="logged_by" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Project_log">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project_log">
-        <MappingFragment StoreEntitySet="Project_log">
+    <EntitySetMapping Name="Projects">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Projects">
+        <MappingFragment StoreEntitySet="Projects">
           <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="Action_Taken" ColumnName="Action_Taken" />
-          <ScalarProperty Name="Action_Date" ColumnName="Action_Date" />
-          <ScalarProperty Name="Status" ColumnName="Status" />
-          <ScalarProperty Name="Comments" ColumnName="Comments" />
-          <ScalarProperty Name="AmountCollected" ColumnName="AmountCollected" />
-          <ScalarProperty Name="Feedback" ColumnName="Feedback" />
-          <ScalarProperty Name="Project_id" ColumnName="Project_id" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="description" ColumnName="description" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="start_date" ColumnName="start_date" />
+          <ScalarProperty Name="end_date" ColumnName="end_date" />
+          <ScalarProperty Name="budget" ColumnName="budget" />
+          <ScalarProperty Name="council_id" ColumnName="council_id" />
+          <ScalarProperty Name="created_by" ColumnName="created_by" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -180,8 +185,18 @@
           <ScalarProperty Name="VisualEvidence" ColumnName="VisualEvidence" />
           <ScalarProperty Name="Status" ColumnName="Status" />
           <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Report_Problem_info">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Report_Problem_info">
+        <MappingFragment StoreEntitySet="Report_Problem_info">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Report_Problem_id" ColumnName="Report_Problem_id" />
           <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-          <ScalarProperty Name="Date" ColumnName="Date" />
+          <ScalarProperty Name="Council_id" ColumnName="Council_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

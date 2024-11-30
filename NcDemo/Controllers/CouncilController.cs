@@ -224,7 +224,7 @@ namespace NcDemo.Controllers
                                select new
                                {
                                    MembersId = m.id,
-                                   MembersName = m.Full_Name
+                                   MembersName = m.Full_Name,
                                }).ToList();
 
                 if (members == null )
@@ -237,6 +237,78 @@ namespace NcDemo.Controllers
             catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetCouncilMembersForManaging(int councilId)
+        {
+            try
+            {
+                var members = (from cm in db.CouncilMembers
+                               join m in db.Member on cm.Member_Id equals m.id
+                               join r in db.Role on cm.Role_Id equals r.id
+                               where cm.Council_Id == councilId 
+                               select new
+                               {
+                                   MembersId = m.id,
+                                   MembersName = m.Full_Name,
+                                   Role = r.Role_Name
+                               }).ToList();
+
+                if (members == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No members available for this Council Id.");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, members);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public HttpResponseMessage UpdateRole (int memberId, int councilId, int roleId)
+        {
+            try
+            {
+                var member = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == memberId && cm.Council_Id == councilId);
+                if(member == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Such Member Found");
+                }
+
+                member.Role_Id = roleId;
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Successfull");
+
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+        [HttpDelete]
+        public HttpResponseMessage RemoveResidentFromCouncil(int memberId, int councilId)
+        {
+            try
+            {
+                var member = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == memberId && cm.Council_Id == councilId);
+                if (member == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Such Member Found");
+                }
+                db.CouncilMembers.Remove(member);
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Resident Removed Sucessfully!");
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
     }

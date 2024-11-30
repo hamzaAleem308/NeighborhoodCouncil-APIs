@@ -31,15 +31,15 @@ namespace NcDemo.Models
         public virtual DbSet<Council> Council { get; set; }
         public virtual DbSet<CouncilMembers> CouncilMembers { get; set; }
         public virtual DbSet<Elections> Elections { get; set; }
-        public virtual DbSet<Meeting> Meeting { get; set; }
-        public virtual DbSet<Meeting_Arrangements> Meeting_Arrangements { get; set; }
+        public virtual DbSet<Meeting_Minutes> Meeting_Minutes { get; set; }
+        public virtual DbSet<Meetings> Meetings { get; set; }
         public virtual DbSet<Member> Member { get; set; }
         public virtual DbSet<Nomination> Nomination { get; set; }
         public virtual DbSet<Panel> Panel { get; set; }
         public virtual DbSet<PanelMembers> PanelMembers { get; set; }
         public virtual DbSet<Problems_History> Problems_History { get; set; }
-        public virtual DbSet<Project> Project { get; set; }
-        public virtual DbSet<Project_log> Project_log { get; set; }
+        public virtual DbSet<Project_Logs> Project_Logs { get; set; }
+        public virtual DbSet<Projects> Projects { get; set; }
         public virtual DbSet<Report_Problem> Report_Problem { get; set; }
         public virtual DbSet<Report_Problem_info> Report_Problem_info { get; set; }
         public virtual DbSet<Role> Role { get; set; }
