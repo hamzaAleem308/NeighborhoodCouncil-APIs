@@ -59,25 +59,28 @@
     <Property Name="EndDate" Type="datetime" />
     <Property Name="Council_id" Type="int" />
   </EntityType>
-  <EntityType Name="Meeting">
+  <EntityType Name="Meeting_Minutes">
     <Key>
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="meeting_id" Type="int" Nullable="false" />
+    <Property Name="minutes" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="recorded_by" Type="int" Nullable="false" />
+    <Property Name="created_at" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Meetings">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="council_id" Type="int" Nullable="false" />
     <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="description" Type="nvarchar" MaxLength="255" />
-    <Property Name="Panel_id" Type="int" />
-    <Property Name="Address" Type="nvarchar(max)" />
-    <Property Name="date" Type="date" />
-  </EntityType>
-  <EntityType Name="Meeting_Arrangements">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Project_id" Type="int" />
-    <Property Name="Panel_id" Type="int" />
-    <Property Name="Meeting_id" Type="int" />
+    <Property Name="address" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="scheduled_date" Type="datetime" Nullable="false" />
+    <Property Name="created_at" Type="datetime" />
+    <Property Name="meeting_type" Type="nvarchar" MaxLength="50" Nullable="false" />
   </EntityType>
   <EntityType Name="Member">
     <Key>
@@ -128,45 +131,56 @@
     <Property Name="Status" Type="nvarchar" MaxLength="30" />
     <Property Name="Problem_id" Type="int" />
   </EntityType>
-  <EntityType Name="Project">
+  <EntityType Name="Project_Logs">
     <Key>
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="title" Type="nvarchar" MaxLength="30" />
-    <Property Name="Description" Type="nvarchar" MaxLength="255" />
-    <Property Name="Status" Type="nvarchar" MaxLength="50" />
-    <Property Name="Date" Type="date" />
-    <Property Name="Budget" Type="decimal" Precision="18" Scale="2" />
-    <Property Name="Member_id" Type="int" />
-    <Property Name="Panel_id" Type="int" />
-    <Property Name="Council_id" Type="int" />
+    <Property Name="project_id" Type="int" Nullable="false" />
+    <Property Name="action_taken" Type="nvarchar" MaxLength="255" Nullable="false" />
+    <Property Name="action_date" Type="date" />
+    <Property Name="status" Type="nvarchar" MaxLength="20" Nullable="false" />
+    <Property Name="comments" Type="nvarchar(max)" />
+    <Property Name="amount_spent" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="feedback" Type="nvarchar(max)" />
+    <Property Name="logged_by" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="Project_log">
+  <EntityType Name="Projects">
     <Key>
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Action_Taken" Type="nvarchar" MaxLength="255" Nullable="false" />
-    <Property Name="Action_Date" Type="date" />
-    <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
-    <Property Name="Comments" Type="nvarchar" MaxLength="255" Nullable="false" />
-    <Property Name="AmountCollected" Type="int" />
-    <Property Name="Feedback" Type="nvarchar" MaxLength="255" Nullable="false" />
-    <Property Name="Project_id" Type="int" />
+    <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="description" Type="nvarchar(max)" />
+    <Property Name="status" Type="nvarchar" MaxLength="20" />
+    <Property Name="start_date" Type="date" />
+    <Property Name="end_date" Type="date" />
+    <Property Name="budget" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+    <Property Name="council_id" Type="int" Nullable="false" />
+    <Property Name="created_by" Type="int" Nullable="false" />
+    <Property Name="created_at" Type="datetime" />
   </EntityType>
   <EntityType Name="Report_Problem">
     <Key>
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="title" Type="nvarchar" MaxLength="50" />
-    <Property Name="Description" Type="nvarchar" MaxLength="255" />
+    <Property Name="title" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
     <Property Name="VisualEvidence" Type="nvarchar(max)" />
     <Property Name="Status" Type="nvarchar" MaxLength="20" />
     <Property Name="ProblemType" Type="nvarchar" MaxLength="30" />
-    <Property Name="Member_id" Type="int" />
-    <Property Name="Date" Type="date" Nullable="false" />
+    <Property Name="Category" Type="nvarchar" MaxLength="30" />
+    <Property Name="CreatedAt" Type="datetime" />
+  </EntityType>
+  <EntityType Name="Report_Problem_info">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Report_Problem_id" Type="int" Nullable="false" />
+    <Property Name="Member_id" Type="int" Nullable="false" />
+    <Property Name="Council_id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Role">
     <Key>
@@ -200,16 +214,17 @@
     <EntitySet Name="Council" EntityType="Self.Council" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Elections" EntityType="Self.Elections" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Meeting" EntityType="Self.Meeting" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Meeting_Arrangements" EntityType="Self.Meeting_Arrangements" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Project_log" EntityType="Self.Project_log" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Serve" EntityType="Self.Serve" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Votes" EntityType="Self.Votes" Schema="dbo" store:Type="Tables" />

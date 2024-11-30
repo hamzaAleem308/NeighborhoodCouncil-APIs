@@ -12,16 +12,12 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Project
+    public partial class Meeting_Minutes
     {
         public int id { get; set; }
-        public string title { get; set; }
-        public string Description { get; set; }
-        public string Status { get; set; }
-        public Nullable<System.DateTime> Date { get; set; }
-        public Nullable<decimal> Budget { get; set; }
-        public Nullable<int> Member_id { get; set; }
-        public Nullable<int> Panel_id { get; set; }
-        public Nullable<int> Council_id { get; set; }
+        public int meeting_id { get; set; }
+        public string minutes { get; set; }
+        public int recorded_by { get; set; }
+        public Nullable<System.DateTime> created_at { get; set; }
     }
 }

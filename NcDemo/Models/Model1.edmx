@@ -64,25 +64,28 @@
           <Property Name="EndDate" Type="datetime" />
           <Property Name="Council_id" Type="int" />
         </EntityType>
-        <EntityType Name="Meeting">
+        <EntityType Name="Meeting_Minutes">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="meeting_id" Type="int" Nullable="false" />
+          <Property Name="minutes" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="recorded_by" Type="int" Nullable="false" />
+          <Property Name="created_at" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Meetings">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="council_id" Type="int" Nullable="false" />
           <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="description" Type="nvarchar" MaxLength="255" />
-          <Property Name="Panel_id" Type="int" />
-          <Property Name="Address" Type="nvarchar(max)" />
-          <Property Name="date" Type="date" />
-        </EntityType>
-        <EntityType Name="Meeting_Arrangements">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Project_id" Type="int" />
-          <Property Name="Panel_id" Type="int" />
-          <Property Name="Meeting_id" Type="int" />
+          <Property Name="address" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="scheduled_date" Type="datetime" Nullable="false" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="meeting_type" Type="nvarchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="Member">
           <Key>
@@ -133,32 +136,34 @@
           <Property Name="Status" Type="nvarchar" MaxLength="30" />
           <Property Name="Problem_id" Type="int" />
         </EntityType>
-        <EntityType Name="Project">
+        <EntityType Name="Project_Logs">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="title" Type="nvarchar" MaxLength="30" />
-          <Property Name="Description" Type="nvarchar" MaxLength="255" />
-          <Property Name="Status" Type="nvarchar" MaxLength="50" />
-          <Property Name="Date" Type="date" />
-          <Property Name="Budget" Type="decimal" Precision="18" Scale="2" />
-          <Property Name="Member_id" Type="int" />
-          <Property Name="Panel_id" Type="int" />
-          <Property Name="Council_id" Type="int" />
+          <Property Name="project_id" Type="int" Nullable="false" />
+          <Property Name="action_taken" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="action_date" Type="date" />
+          <Property Name="status" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="comments" Type="nvarchar(max)" />
+          <Property Name="amount_spent" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="feedback" Type="nvarchar(max)" />
+          <Property Name="logged_by" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="Project_log">
+        <EntityType Name="Projects">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Action_Taken" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="Action_Date" Type="date" />
-          <Property Name="Status" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Comments" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="AmountCollected" Type="int" />
-          <Property Name="Feedback" Type="nvarchar" MaxLength="255" Nullable="false" />
-          <Property Name="Project_id" Type="int" />
+          <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="description" Type="nvarchar(max)" />
+          <Property Name="status" Type="nvarchar" MaxLength="20" />
+          <Property Name="start_date" Type="date" />
+          <Property Name="end_date" Type="date" />
+          <Property Name="budget" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="council_id" Type="int" Nullable="false" />
+          <Property Name="created_by" Type="int" Nullable="false" />
+          <Property Name="created_at" Type="datetime" />
         </EntityType>
         <EntityType Name="Report_Problem">
           <Key>
@@ -214,15 +219,15 @@
           <EntitySet Name="Council" EntityType="Self.Council" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Elections" EntityType="Self.Elections" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Meeting" EntityType="Self.Meeting" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Meeting_Arrangements" EntityType="Self.Meeting_Arrangements" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Project" EntityType="Self.Project" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Project_log" EntityType="Self.Project_log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
@@ -293,25 +298,28 @@
           <Property Name="EndDate" Type="DateTime" Precision="3" />
           <Property Name="Council_id" Type="Int32" />
         </EntityType>
-        <EntityType Name="Meeting">
+        <EntityType Name="Meeting_Minutes">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="meeting_id" Type="Int32" Nullable="false" />
+          <Property Name="minutes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="recorded_by" Type="Int32" Nullable="false" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Meetings">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="council_id" Type="Int32" Nullable="false" />
           <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Panel_id" Type="Int32" />
-          <Property Name="Address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="date" Type="DateTime" Precision="0" />
-        </EntityType>
-        <EntityType Name="Meeting_Arrangements">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Project_id" Type="Int32" />
-          <Property Name="Panel_id" Type="Int32" />
-          <Property Name="Meeting_id" Type="Int32" />
+          <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="scheduled_date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="meeting_type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <EntityType Name="Member">
           <Key>
@@ -362,32 +370,34 @@
           <Property Name="Status" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="Problem_id" Type="Int32" />
         </EntityType>
-        <EntityType Name="Project">
+        <EntityType Name="Project_Logs">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="title" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Date" Type="DateTime" Precision="0" />
-          <Property Name="Budget" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="Member_id" Type="Int32" />
-          <Property Name="Panel_id" Type="Int32" />
-          <Property Name="Council_id" Type="Int32" />
+          <Property Name="project_id" Type="Int32" Nullable="false" />
+          <Property Name="action_taken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="action_date" Type="DateTime" Precision="0" />
+          <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="amount_spent" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="feedback" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="logged_by" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityType Name="Project_log">
+        <EntityType Name="Projects">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Action_Taken" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Action_Date" Type="DateTime" Precision="0" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Comments" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="AmountCollected" Type="Int32" />
-          <Property Name="Feedback" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Project_id" Type="Int32" />
+          <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="start_date" Type="DateTime" Precision="0" />
+          <Property Name="end_date" Type="DateTime" Precision="0" />
+          <Property Name="budget" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="council_id" Type="Int32" Nullable="false" />
+          <Property Name="created_by" Type="Int32" Nullable="false" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Report_Problem">
           <Key>
@@ -443,15 +453,15 @@
           <EntitySet Name="Council" EntityType="Self.Council" />
           <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" />
           <EntitySet Name="Elections" EntityType="Self.Elections" />
-          <EntitySet Name="Meeting" EntityType="Self.Meeting" />
-          <EntitySet Name="Meeting_Arrangements" EntityType="Self.Meeting_Arrangements" />
+          <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" />
+          <EntitySet Name="Meetings" EntityType="Self.Meetings" />
           <EntitySet Name="Member" EntityType="Self.Member" />
           <EntitySet Name="Nomination" EntityType="Self.Nomination" />
           <EntitySet Name="Panel" EntityType="Self.Panel" />
           <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" />
           <EntitySet Name="Problems_History" EntityType="Self.Problems_History" />
-          <EntitySet Name="Project" EntityType="Self.Project" />
-          <EntitySet Name="Project_log" EntityType="Self.Project_log" />
+          <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" />
+          <EntitySet Name="Projects" EntityType="Self.Projects" />
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
           <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" />
           <EntitySet Name="Role" EntityType="Self.Role" />
@@ -529,25 +539,28 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Meeting">
-            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting">
-              <MappingFragment StoreEntitySet="Meeting">
+          <EntitySetMapping Name="Meeting_Minutes">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting_Minutes">
+              <MappingFragment StoreEntitySet="Meeting_Minutes">
                 <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="title" ColumnName="title" />
-                <ScalarProperty Name="description" ColumnName="description" />
-                <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
-                <ScalarProperty Name="Address" ColumnName="Address" />
-                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="meeting_id" ColumnName="meeting_id" />
+                <ScalarProperty Name="minutes" ColumnName="minutes" />
+                <ScalarProperty Name="recorded_by" ColumnName="recorded_by" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Meeting_Arrangements">
-            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting_Arrangements">
-              <MappingFragment StoreEntitySet="Meeting_Arrangements">
+          <EntitySetMapping Name="Meetings">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meetings">
+              <MappingFragment StoreEntitySet="Meetings">
                 <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="Project_id" ColumnName="Project_id" />
-                <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
-                <ScalarProperty Name="Meeting_id" ColumnName="Meeting_id" />
+                <ScalarProperty Name="council_id" ColumnName="council_id" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="scheduled_date" ColumnName="scheduled_date" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="meeting_type" ColumnName="meeting_type" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -605,32 +618,34 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Project">
-            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project">
-              <MappingFragment StoreEntitySet="Project">
+          <EntitySetMapping Name="Project_Logs">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project_Logs">
+              <MappingFragment StoreEntitySet="Project_Logs">
                 <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="title" ColumnName="title" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="Budget" ColumnName="Budget" />
-                <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-                <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
-                <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+                <ScalarProperty Name="project_id" ColumnName="project_id" />
+                <ScalarProperty Name="action_taken" ColumnName="action_taken" />
+                <ScalarProperty Name="action_date" ColumnName="action_date" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="comments" ColumnName="comments" />
+                <ScalarProperty Name="amount_spent" ColumnName="amount_spent" />
+                <ScalarProperty Name="feedback" ColumnName="feedback" />
+                <ScalarProperty Name="logged_by" ColumnName="logged_by" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Project_log">
-            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project_log">
-              <MappingFragment StoreEntitySet="Project_log">
+          <EntitySetMapping Name="Projects">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Projects">
+              <MappingFragment StoreEntitySet="Projects">
                 <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="Action_Taken" ColumnName="Action_Taken" />
-                <ScalarProperty Name="Action_Date" ColumnName="Action_Date" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Comments" ColumnName="Comments" />
-                <ScalarProperty Name="AmountCollected" ColumnName="AmountCollected" />
-                <ScalarProperty Name="Feedback" ColumnName="Feedback" />
-                <ScalarProperty Name="Project_id" ColumnName="Project_id" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="description" ColumnName="description" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="start_date" ColumnName="start_date" />
+                <ScalarProperty Name="end_date" ColumnName="end_date" />
+                <ScalarProperty Name="budget" ColumnName="budget" />
+                <ScalarProperty Name="council_id" ColumnName="council_id" />
+                <ScalarProperty Name="created_by" ColumnName="created_by" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
