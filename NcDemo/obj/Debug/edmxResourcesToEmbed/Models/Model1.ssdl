@@ -24,7 +24,7 @@
     </Key>
     <Property Name="candidate_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="member_id" Type="int" />
-    <Property Name="election_id" Type="int" />
+    <Property Name="council_id" Type="int" />
     <Property Name="panel_id" Type="int" />
     <Property Name="created_at" Type="datetime" />
   </EntityType>
@@ -106,6 +106,22 @@
     <Property Name="Election_id" Type="int" />
     <Property Name="Panel_id" Type="int" />
   </EntityType>
+  <EntityType Name="Notifications">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="council_id" Type="int" Nullable="false" />
+    <Property Name="member_id" Type="int" />
+    <Property Name="module" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="message" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="action_url" Type="nvarchar(max)" />
+    <Property Name="data" Type="nvarchar(max)" />
+    <Property Name="is_read" Type="bit" />
+    <Property Name="created_at" Type="datetime" />
+    <Property Name="updated_at" Type="datetime" />
+  </EntityType>
   <EntityType Name="Panel">
     <Key>
       <PropertyRef Name="id" />
@@ -113,7 +129,8 @@
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Candidate_Id" Type="int" />
     <Property Name="Name" Type="varchar" MaxLength="255" />
-    <Property Name="Election_Id" Type="int" />
+    <Property Name="council_Id" Type="int" />
+    <Property Name="created_by" Type="int" />
   </EntityType>
   <EntityType Name="PanelMembers">
     <Key>
@@ -218,6 +235,7 @@
     <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />

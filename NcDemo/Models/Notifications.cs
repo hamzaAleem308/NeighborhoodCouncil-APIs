@@ -12,12 +12,18 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Panel
+    public partial class Notifications
     {
         public int id { get; set; }
-        public Nullable<int> Candidate_Id { get; set; }
-        public string Name { get; set; }
-        public Nullable<int> council_Id { get; set; }
-        public Nullable<int> created_by { get; set; }
+        public int council_id { get; set; }
+        public Nullable<int> member_id { get; set; }
+        public string module { get; set; }
+        public string title { get; set; }
+        public string message { get; set; }
+        public string action_url { get; set; }
+        public string data { get; set; }
+        public Nullable<bool> is_read { get; set; }
+        public Nullable<System.DateTime> created_at { get; set; }
+        public Nullable<System.DateTime> updated_at { get; set; }
     }
 }

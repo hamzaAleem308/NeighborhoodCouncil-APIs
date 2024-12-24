@@ -24,7 +24,7 @@
     </Key>
     <Property Name="candidate_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="member_id" Type="Int32" />
-    <Property Name="election_id" Type="Int32" />
+    <Property Name="council_id" Type="Int32" />
     <Property Name="panel_id" Type="Int32" />
     <Property Name="created_at" Type="DateTime" Precision="3" />
   </EntityType>
@@ -106,6 +106,22 @@
     <Property Name="Election_id" Type="Int32" />
     <Property Name="Panel_id" Type="Int32" />
   </EntityType>
+  <EntityType Name="Notifications">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="council_id" Type="Int32" Nullable="false" />
+    <Property Name="member_id" Type="Int32" />
+    <Property Name="module" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="action_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="is_read" Type="Boolean" />
+    <Property Name="created_at" Type="DateTime" Precision="3" />
+    <Property Name="updated_at" Type="DateTime" Precision="3" />
+  </EntityType>
   <EntityType Name="Panel">
     <Key>
       <PropertyRef Name="id" />
@@ -113,7 +129,8 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Candidate_Id" Type="Int32" />
     <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-    <Property Name="Election_Id" Type="Int32" />
+    <Property Name="council_Id" Type="Int32" />
+    <Property Name="created_by" Type="Int32" />
   </EntityType>
   <EntityType Name="PanelMembers">
     <Key>
@@ -218,6 +235,7 @@
     <EntitySet Name="Meetings" EntityType="Self.Meetings" />
     <EntitySet Name="Member" EntityType="Self.Member" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" />
+    <EntitySet Name="Notifications" EntityType="Self.Notifications" />
     <EntitySet Name="Panel" EntityType="Self.Panel" />
     <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" />

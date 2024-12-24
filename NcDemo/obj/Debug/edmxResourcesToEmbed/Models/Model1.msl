@@ -26,7 +26,7 @@
         <MappingFragment StoreEntitySet="Candidates">
           <ScalarProperty Name="candidate_id" ColumnName="candidate_id" />
           <ScalarProperty Name="member_id" ColumnName="member_id" />
-          <ScalarProperty Name="election_id" ColumnName="election_id" />
+          <ScalarProperty Name="council_id" ColumnName="council_id" />
           <ScalarProperty Name="panel_id" ColumnName="panel_id" />
           <ScalarProperty Name="created_at" ColumnName="created_at" />
         </MappingFragment>
@@ -117,13 +117,31 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Notifications">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Notifications">
+        <MappingFragment StoreEntitySet="Notifications">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="council_id" ColumnName="council_id" />
+          <ScalarProperty Name="member_id" ColumnName="member_id" />
+          <ScalarProperty Name="module" ColumnName="module" />
+          <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="message" ColumnName="message" />
+          <ScalarProperty Name="action_url" ColumnName="action_url" />
+          <ScalarProperty Name="data" ColumnName="data" />
+          <ScalarProperty Name="is_read" ColumnName="is_read" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Panel">
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Panel">
         <MappingFragment StoreEntitySet="Panel">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Candidate_Id" ColumnName="Candidate_Id" />
           <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="Election_Id" ColumnName="Election_Id" />
+          <ScalarProperty Name="council_Id" ColumnName="council_Id" />
+          <ScalarProperty Name="created_by" ColumnName="created_by" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

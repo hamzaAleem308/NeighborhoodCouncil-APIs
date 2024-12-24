@@ -51,6 +51,12 @@ namespace NcDemo.Controllers
         {
             try
             {
+                var ifElectionExists = db.Elections.FirstOrDefault(e => e.Council_id == elect.Council_id && e.status != "Closed");
+
+                if (ifElectionExists != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Found, "Election Already Exists, close the Previous Election First");
+                }
                 var election = new Elections
                 {
                     Name = elect.Name,
@@ -60,8 +66,18 @@ namespace NcDemo.Controllers
                     Council_id = elect.Council_id,
                 };
                 db.Elections.Add(election);
+                
+                var notify = new Notifications
+                {
+                    council_id = (int)elect.Council_id,
+                    title = "An Election has been Initiated in the Council",
+                    message = $"{elect.StartDate} to {elect.EndDate}",
+                    module = "Election",
+                    created_at = DateTime.Now,
+                    
+                };
+                db.Notifications.Add(notify);
                 db.SaveChanges();
-
                 return Request.CreateResponse(HttpStatusCode.OK, "Election initiated successfully.");
             }
             catch (Exception ex)
@@ -71,119 +87,279 @@ namespace NcDemo.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage NominateCandidateForPanel(
-            int councilMemberId, 
-            int electionId, 
-            string panelName, 
-            int councilId
-            ) {
-            try 
+        public HttpResponseMessage NominateCandidateForPanel([FromBody] NominateCandidateRequest request)
+        {
+            try
             {
-                // Check if the council member is already a candidate for this election
-                var existingCandidate = db.Candidates.FirstOrDefault(c => c.member_id == councilMemberId && c.election_id == electionId);
+                // Extract values from the request object
+                int candidateId = request.CandidateId;
+                int[] panelMembersId = request.PanelMembersId;
+                string panelName = request.PanelName;
+                int councilId = request.CouncilId;
+                int MemberId = request.MemberId;
+
+                // Check if the member is already a candidate for this election
+                var existingCandidate = db.Candidates.FirstOrDefault(c => c.member_id == candidateId && c.council_id == councilId);
                 if (existingCandidate != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Conflict, "This member is already nominated as a candidate for this election.");
                 }
 
-                // Create a new Panel for the candidate
+                // Create a new panel
                 Panel newPanel = new Panel
                 {
-                    Candidate_Id = councilMemberId,  // Candidate leads the panel
+                    Candidate_Id = candidateId,
                     Name = panelName,
-                    Election_Id = electionId
+                    council_Id = councilId,
+                    created_by = MemberId
                 };
-
                 db.Panel.Add(newPanel);
-                db.SaveChanges();
+                db.SaveChanges(); // Save to generate Panel ID
 
-                // Nominate the candidate and assign them to the panel
-                Candidates newCandidate = new Candidates
+                // Fetch council members manually without using `Contains`
+                var councilMembers = new List<CouncilMembers>();
+                foreach (var memberId in panelMembersId)
                 {
-                    member_id = councilMemberId,  // Link to the council member
-                    election_id = electionId,     // Link to the election
-                    panel_id = newPanel.id,       // Link to the newly created panel
-                    created_at = DateTime.Now
-                };
+                    var member = db.CouncilMembers
+                        .FirstOrDefault(cm => cm.Member_Id == memberId && cm.Council_Id == councilId);
+                    if (member != null)
+                    {
+                        councilMembers.Add(member);
+                    }
+                }
 
-                db.Candidates.Add(newCandidate);
-                db.SaveChanges();
+                if (councilMembers == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Members Found for Panel Selection.");
+                }
 
-                // Update the CouncilMembers table to assign the panel ID
-                var councilMember = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == councilMemberId && cm.Council_Id == councilId);
+                // Assign panel ID to council members and prepare panel members
+                var panelMembers = new List<PanelMembers>();
+                foreach (var member in councilMembers)
+                {
+                    member.Panel_Id = newPanel.id; // Assign Panel ID to CouncilMember
+
+                    // Prepare PanelMember object
+                    var PM = new PanelMembers
+                    {
+                        Member_Id = member.Member_Id,
+                        Panel_Id = newPanel.id
+                    };
+                    panelMembers.Add(PM);
+                }
+
+                // Add all PanelMembers to the database at once
+                db.PanelMembers.AddRange(panelMembers);
+
+                // Assign the candidate's panel ID to the council member
+                var councilMember = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == candidateId && cm.Council_Id == councilId);
                 if (councilMember != null)
                 {
                     councilMember.Panel_Id = newPanel.id; // Assign the new panel ID to the council member
-                    db.SaveChanges();
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound, "Council member not found.");
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, "Candidate successfully nominated, panel created, and member added to panel.");
+                // Create notifications for panel members
+                var notifications = new List<Notifications>();
+                foreach (var member in councilMembers)
+                {
+                    notifications.Add(new Notifications
+                    {
+                        council_id = councilId,
+                        member_id = member.Member_Id,
+                        title = "You've been Nominated as a Panel Member",
+                        message = "Nominations are being made for Committee Selection, and you've been Nominated.",
+                        module = "Election",
+                        is_read = false,
+                        created_at = DateTime.Now,
+                    });
+                }
+                db.Notifications.AddRange(notifications);
+
+                // Nominate the candidate and assign to panel
+
+                Candidates newCandidate = new Candidates
+                {
+                    member_id = candidateId,
+                    council_id = councilId,
+                    panel_id = newPanel.id,
+                    created_at = DateTime.Now
+                };
+                db.Candidates.Add(newCandidate);
+
+                var notificationForCandidate = new Notifications 
+                {
+                    council_id = councilId,
+                    member_id = candidateId,
+                    title = "You've been Nominated as a Panel Chairman",
+                    message = "Nominations are being made for Committee Selection, and you've been Nominated.",
+                    module = "Election",
+                    is_read = false,
+                    created_at = DateTime.Now,
+                };
+                db.Notifications.Add(notificationForCandidate);
+                // Save all changes at once
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Candidate successfully nominated, panel created, and members added to panel.");
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An internal server error occurred: " + ex.Message);
+            }
+        }
+        public class NominateCandidateRequest
+        {
+            public int CandidateId { get; set; }
+            public int[] PanelMembersId { get; set; }
+            public string PanelName { get; set; }
+            public int CouncilId { get; set; }
+            public int MemberId { get; set; }
+        }
+
+
+
+
+        [HttpPost]
+        public HttpResponseMessage RemoveCandidateForPanel([FromBody] RemoveCandidateRequest request)
+        {
+            try
+            {
+                // Extract values from the request object
+                int candidateId = request.CandidateId;
+                int councilId = request.CouncilId;
+
+                // Find the candidate
+                var candidate = db.Candidates.FirstOrDefault(c => c.member_id == candidateId && c.council_id == councilId);
+                if (candidate == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Candidate not found for the specified council.");
+                }
+
+                // Find the panel associated with the candidate
+                var panel = db.Panel.FirstOrDefault(p => p.Candidate_Id == candidateId && p.council_Id == councilId);
+                if (panel == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Panel not found for the candidate.");
+                }
+
+                // Remove all panel members associated with the panel
+                var panelMembers = db.PanelMembers.Where(pm => pm.Panel_Id == panel.id).ToList();
+                db.PanelMembers.RemoveRange(panelMembers);
+
+                // Reset Panel_Id for all council members
+                var councilMembers = db.CouncilMembers.Where(cm => cm.Panel_Id == panel.id).ToList();
+                foreach (var member in councilMembers)
+                {
+                    member.Panel_Id = 0;
+                }
+
+                // Remove the panel itself
+                db.Panel.Remove(panel);
+
+                // Remove the candidate entry
+                db.Candidates.Remove(candidate);
+
+                // Save changes
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Candidate and associated panel successfully removed.");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An internal server error occurred: " + ex.Message);
             }
         }
 
-        [HttpDelete]
-        public HttpResponseMessage RemoveCandidateFromPanel(
-            int councilMemberId, 
-            int electionId, 
-            int councilId
-            ) {
+
+        public class RemoveCandidateRequest
+        {
+            public int CandidateId { get; set; }
+            public int CouncilId { get; set; }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage ShowNominationByMember(int memberId, int councilId)
+        {
             try
             {
-                // Find the candidate in the Candidates table
-                var candidate = db.Candidates.FirstOrDefault(c => c.member_id == councilMemberId && c.election_id == electionId);
-                if (candidate == null)
+                var nomination = db.Panel.Where(p => p.created_by == memberId).
+                    Select(c => new
+                    {
+                        CandidateId = c.Candidate_Id,
+                        CandidateName = db.Member.FirstOrDefault(m => m.id == c.Candidate_Id).Full_Name.ToString(),
+                        PanelName = db.Panel.FirstOrDefault(p => p.id == c.id).Name,
+                        PanelMembers = db.PanelMembers
+                            .Where(pm => pm.Panel_Id == c.id)
+                            .Select(pm => new
+                            {
+                                MemberId = pm.Member_Id,
+                                MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name
+                            }).ToList()
+                    }).ToList();
+
+                if(nomination == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Candidate not found for this election.");
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Nomination Found");
                 }
-
-                // Find the corresponding panel associated with the candidate
-                var panel = db.Panel.FirstOrDefault(p => p.id == candidate.panel_id);
-                if (panel == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Panel not found.");
-                }
-
-                // Remove the candidate from the Candidates table
-                db.Candidates.Remove(candidate);
-
-                // Remove the panel associated with the candidate
-                db.Panel.Remove(panel);
-                db.SaveChanges();
-
-                // Revert the CouncilMembers table: Reset the Panel_Id to 0
-                var councilMember = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == councilMemberId && cm.Council_Id == councilId);
-                if (councilMember != null)
-                {
-                    councilMember.Panel_Id = 0;  // Reset the panel ID to its original state (no panel)
-                    db.SaveChanges();
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, "Candidate successfully removed from nomination and panel.");
+               return Request.CreateResponse(HttpStatusCode.OK, nomination);
             }
-            catch (Exception ex)
+            catch(Exception ee)
             {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+               return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
 
         [HttpGet]
-        public HttpResponseMessage GetSelectedCandidates(int electionId)
+        public HttpResponseMessage ShowCandidates(int councilId)
         {
             try
             {
-                var result = (from e in db.Elections
-                              join p in db.Panel on e.id equals p.Election_Id
+                // Fetch all candidates for the specified council
+                var candidates = db.Candidates
+                    .Where(c => c.council_id == councilId)
+                    .Select(c => new
+                    {
+                        CandidateId = c.member_id,
+                        CandidateName = db.Member.FirstOrDefault(m => m.id == c.member_id).Full_Name.ToString(),
+                        PanelName = db.Panel.FirstOrDefault(p => p.id == c.panel_id).Name,
+                        PanelMembers = db.PanelMembers
+                            .Where(pm => pm.Panel_Id == c.panel_id)
+                            .Select(pm => new
+                            {
+                                MemberId = pm.Member_Id,
+                                MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name
+                            }).ToList()
+                    }).ToList();
+
+                if (candidates == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No candidates found for the specified council.");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, candidates);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An internal server error occurred: " + ex.Message);
+            }
+        }
+
+
+
+        [HttpGet]
+        public HttpResponseMessage GetSelectedCandidates(int councilId)
+        {
+            try
+            {
+                var result = (from co in db.Council
+                              join p in db.Panel on co.id equals p.council_Id
                               join c in db.Candidates on p.id equals c.panel_id
                               join m in db.Member on c.member_id equals m.id
-                              where e.id == electionId
+                              where co.id == councilId
                               select new
                               {
                                   MemberId = m.id,
@@ -211,25 +387,13 @@ namespace NcDemo.Controllers
         {
             try
             {
-                /* var result = (from e in db.Elections
-                               join p in db.Panel on e.id equals p.Election_Id
-                               where e.Council_id == councilId
-                                  select new
-                                  {
-                                      ElectionId = e.id,
-                                      ElectionName = e.Name,
-                                      Status = e.status,
-                                      StartDate = e.StartDate,
-                                      EndDate = e.EndDate,
-                                      PanelId = p.id,
-                                      PanelName = p.Name,
-                                  }).ToList();*/
-
-                var result = (from e in db.Elections
-                              join p in db.Panel on e.id equals p.Election_Id
+                
+                var result = (from co in db.Council
+                              join e in db.Elections on co.id equals e.Council_id
+                              join p in db.Panel on co.id equals p.council_Id
                               join c in db.Candidates on p.id equals c.panel_id
                               join m in db.Member on c.member_id equals m.id
-                              where e.Council_id == councilId
+                              where co.id == councilId
                               select new
                               {
                                   ElectionId = e.id,
@@ -237,12 +401,19 @@ namespace NcDemo.Controllers
                                   Status = e.status,
                                   StartDate = e.StartDate,
                                   EndDate = e.EndDate,
-                                  CouncilId = e.Council_id,
+                                  /*CouncilId = co.Council_id,*/
                                   PanelId = p.id,
                                   PanelName = p.Name,
                                   CandidateId = p.Candidate_Id,
                                   MemberId = m.id,
-                                  MemberName = m.Full_Name
+                                  MemberName = m.Full_Name,
+                                  PanelMembers = db.PanelMembers
+                                    .Where(pm => pm.Panel_Id == c.panel_id)
+                                    .Select(pm => new
+                                    {
+                                        MemberId = pm.Member_Id,
+                                        MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name
+                                    }).ToList()
                               }).ToList();
 
                 if (result == null)
@@ -356,19 +527,21 @@ namespace NcDemo.Controllers
 
 
         [HttpGet]
-        public HttpResponseMessage GetElectionWithVotes(int electionId)
+        public HttpResponseMessage GetElectionWithVotes(int councilId)
         {
             try
             {
                 var election = db.Elections
-                    .Where(e => e.id == electionId)
+                    .Where(e => e.Council_id == councilId)
                     .Select(e => new
                     {
                         ElectionId = e.id,
                         ElectionName = e.Name,
                         Status = e.status,
+                        StartDate = e.StartDate,
+                        EndDate = e.EndDate,
                         Candidates = db.Candidates
-                            .Where(c => c.election_id == electionId)
+                            .Where(c => c.council_id == councilId)
                             .Select(c => new
                             {
                                 CandidateId = c.candidate_id,
@@ -408,7 +581,7 @@ namespace NcDemo.Controllers
                         ElectionName = e.Name,
                         Status = e.status,
                         Candidates = db.Candidates
-                            .Where(c => c.election_id == e.id)
+                            .Where(c => c.council_id == e.id)
                             .Select(c => new
                             {
                                 CandidateId = c.candidate_id,

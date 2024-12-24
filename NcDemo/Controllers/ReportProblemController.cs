@@ -84,6 +84,57 @@ namespace NcDemo.Controllers
         }
 
         [HttpGet]
+        public HttpResponseMessage GetReportedProblems(int councilId)
+        {
+            try
+            {
+                // Fetch raw data from the database
+                var rawProblems = (from problem in db.Report_Problem
+                                   join problemInfo in db.Report_Problem_info
+                                   on problem.id equals problemInfo.Report_Problem_id
+                                   where problemInfo.Council_id == councilId
+                                   select new
+                                   {
+                                       ProblemId = problem.id,
+                                       Title = problem.title,
+                                       Description = problem.Description,
+                                       Status = problem.Status,
+                                       ProblemType = problem.ProblemType,
+                                       Category = problem.Category,
+                                       CreatedAt = problem.CreatedAt,
+                                       VisualEvidence = problem.VisualEvidence,
+                                       MemberId = problemInfo.Member_id,
+                                       CouncilId = problemInfo.Council_id
+                                   }).ToList();
+
+                // Perform transformations in memory
+                var transformedProblems = rawProblems.Select(problem => new
+                {
+                    problem.ProblemId,
+                    problem.Title,
+                    problem.Description,
+                    problem.Status,
+                    problem.ProblemType,
+                    problem.Category,
+                    problem.CreatedAt,
+                    VisualEvidence = !string.IsNullOrEmpty(problem.VisualEvidence)
+                        ? new Uri(HttpContext.Current.Request.Url, problem.VisualEvidence).AbsoluteUri
+                        : null,
+                    problem.MemberId,
+                    problem.CouncilId
+                }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+                
+            }
+        }
+
+
+        [HttpGet]
         public HttpResponseMessage getProblemStatusSummary(int memberId, int councilId)
         {
 

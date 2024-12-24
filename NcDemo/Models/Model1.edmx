@@ -29,7 +29,7 @@
           </Key>
           <Property Name="candidate_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="member_id" Type="int" />
-          <Property Name="election_id" Type="int" />
+          <Property Name="council_id" Type="int" />
           <Property Name="panel_id" Type="int" />
           <Property Name="created_at" Type="datetime" />
         </EntityType>
@@ -111,6 +111,22 @@
           <Property Name="Election_id" Type="int" />
           <Property Name="Panel_id" Type="int" />
         </EntityType>
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="council_id" Type="int" Nullable="false" />
+          <Property Name="member_id" Type="int" />
+          <Property Name="module" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="message" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="action_url" Type="nvarchar(max)" />
+          <Property Name="data" Type="nvarchar(max)" />
+          <Property Name="is_read" Type="bit" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+        </EntityType>
         <EntityType Name="Panel">
           <Key>
             <PropertyRef Name="id" />
@@ -118,7 +134,8 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Candidate_Id" Type="int" />
           <Property Name="Name" Type="varchar" MaxLength="255" />
-          <Property Name="Election_Id" Type="int" />
+          <Property Name="council_Id" Type="int" />
+          <Property Name="created_by" Type="int" />
         </EntityType>
         <EntityType Name="PanelMembers">
           <Key>
@@ -223,6 +240,7 @@
           <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
@@ -263,7 +281,7 @@
           </Key>
           <Property Name="candidate_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="member_id" Type="Int32" />
-          <Property Name="election_id" Type="Int32" />
+          <Property Name="council_id" Type="Int32" />
           <Property Name="panel_id" Type="Int32" />
           <Property Name="created_at" Type="DateTime" Precision="3" />
         </EntityType>
@@ -345,6 +363,22 @@
           <Property Name="Election_id" Type="Int32" />
           <Property Name="Panel_id" Type="Int32" />
         </EntityType>
+        <EntityType Name="Notifications">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="council_id" Type="Int32" Nullable="false" />
+          <Property Name="member_id" Type="Int32" />
+          <Property Name="module" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="action_url" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="is_read" Type="Boolean" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="Panel">
           <Key>
             <PropertyRef Name="id" />
@@ -352,7 +386,8 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Candidate_Id" Type="Int32" />
           <Property Name="Name" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="Election_Id" Type="Int32" />
+          <Property Name="council_Id" Type="Int32" />
+          <Property Name="created_by" Type="Int32" />
         </EntityType>
         <EntityType Name="PanelMembers">
           <Key>
@@ -457,6 +492,7 @@
           <EntitySet Name="Meetings" EntityType="Self.Meetings" />
           <EntitySet Name="Member" EntityType="Self.Member" />
           <EntitySet Name="Nomination" EntityType="Self.Nomination" />
+          <EntitySet Name="Notifications" EntityType="Self.Notifications" />
           <EntitySet Name="Panel" EntityType="Self.Panel" />
           <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" />
           <EntitySet Name="Problems_History" EntityType="Self.Problems_History" />
@@ -499,7 +535,7 @@
               <MappingFragment StoreEntitySet="Candidates">
                 <ScalarProperty Name="candidate_id" ColumnName="candidate_id" />
                 <ScalarProperty Name="member_id" ColumnName="member_id" />
-                <ScalarProperty Name="election_id" ColumnName="election_id" />
+                <ScalarProperty Name="council_id" ColumnName="council_id" />
                 <ScalarProperty Name="panel_id" ColumnName="panel_id" />
                 <ScalarProperty Name="created_at" ColumnName="created_at" />
               </MappingFragment>
@@ -590,13 +626,31 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Notifications">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Notifications">
+              <MappingFragment StoreEntitySet="Notifications">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="council_id" ColumnName="council_id" />
+                <ScalarProperty Name="member_id" ColumnName="member_id" />
+                <ScalarProperty Name="module" ColumnName="module" />
+                <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="message" ColumnName="message" />
+                <ScalarProperty Name="action_url" ColumnName="action_url" />
+                <ScalarProperty Name="data" ColumnName="data" />
+                <ScalarProperty Name="is_read" ColumnName="is_read" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Panel">
             <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Panel">
               <MappingFragment StoreEntitySet="Panel">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Candidate_Id" ColumnName="Candidate_Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Election_Id" ColumnName="Election_Id" />
+                <ScalarProperty Name="council_Id" ColumnName="council_Id" />
+                <ScalarProperty Name="created_by" ColumnName="created_by" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

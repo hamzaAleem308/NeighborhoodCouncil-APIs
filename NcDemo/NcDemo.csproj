@@ -220,6 +220,9 @@
     <Compile Include="Models\Nomination.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Notifications.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Panel.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

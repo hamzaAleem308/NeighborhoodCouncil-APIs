@@ -109,5 +109,51 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
+
+        [HttpGet]
+        public HttpResponseMessage GetMeetingMinutes(int meetingId, int councilId)
+        {
+            try
+            {
+                var meetingMinutesData = (from meeting in db.Meetings
+                                          join minutes in db.Meeting_Minutes
+                                          on meeting.id equals minutes.meeting_id
+                                          where minutes.meeting_id == meetingId
+                                          select new
+                                          {
+                                              MeetingId = meeting.id,
+                                              Title = meeting.title,
+                                              Description = meeting.description,
+                                              ScheduledDate = meeting.scheduled_date,
+                                              Address = meeting.address,
+                                              MeetingType = meeting.meeting_type,
+                                              CreatedAt = meeting.created_at,
+                                              MinutesId = minutes.id,
+                                              Minutes = minutes.minutes,
+                                              RecordedBy = db.Member
+                                                              .Where(m => m.id == minutes.recorded_by)
+                                                              .Select(m => m.Full_Name).FirstOrDefault(),
+                                              RoleName = db.CouncilMembers
+                                                      .Where(cm => cm.Member_Id == minutes.recorded_by && cm.Council_Id == councilId)
+                                                      .Select(x => db.Role
+                                                                     .Where(r => r.id == x.Role_Id)
+                                                                     .Select(o => o.Role_Name)
+                                                                     .FirstOrDefault()),
+                                              MinutesCreatedAt = minutes.created_at
+                                          }).ToList();
+
+                if (meetingMinutesData == null )
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No meeting minutes found for the given council.");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, meetingMinutesData);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
     }
 }

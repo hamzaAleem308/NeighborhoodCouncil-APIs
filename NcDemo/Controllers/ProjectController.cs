@@ -1,39 +1,67 @@
-﻿using System;
+﻿using NcDemo.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Web.Http;
 
 namespace NcDemo.Controllers
 {
     public class ProjectController : ApiController
     {
-        // GET api/<controller>
-        public IEnumerable<string> Get()
+        NeighborhoodCouncilEntities db = new NeighborhoodCouncilEntities();
+
+        [HttpPost]
+       public HttpResponseMessage AddProject (Projects project, int councilId, int memberId)
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                if(project == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                }
+
+                var newProject = new Projects
+                {
+                    title = project.title,
+                    description = project.description,
+                    status = "Pending",
+                    start_date = DateTime.Now,
+                    end_date = DateTime.Now,
+                    budget = project.budget,
+                    council_id = councilId,
+                    created_by = memberId,
+                    created_at = DateTime.Now
+                };
+                db.Projects.Add(newProject);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
         }
 
-        // GET api/<controller>/5
-        public string Get(int id)
+        [HttpGet]
+        public HttpResponseMessage ShowProjects(int councilId)
         {
-            return "value";
-        }
-
-        // POST api/<controller>
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<controller>/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<controller>/5
-        public void Delete(int id)
-        {
+            try
+            {
+                var projects = db.Projects.Where(x => x.council_id == councilId);
+                if (projects == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Projects Found");
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, projects);
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
         }
     }
 }
