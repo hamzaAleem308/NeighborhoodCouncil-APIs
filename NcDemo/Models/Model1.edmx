@@ -42,6 +42,7 @@
           <Property Name="Description" Type="nvarchar" MaxLength="255" />
           <Property Name="Date" Type="date" />
           <Property Name="JoinCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="DisplayPicture" Type="nvarchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="CouncilMembers">
           <Key>
@@ -81,6 +82,8 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="council_id" Type="int" Nullable="false" />
           <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="problem_id" Type="int" />
+          <Property Name="project_id" Type="int" />
           <Property Name="description" Type="nvarchar" MaxLength="255" />
           <Property Name="address" Type="nvarchar(max)" Nullable="false" />
           <Property Name="scheduled_date" Type="datetime" Nullable="false" />
@@ -144,6 +147,7 @@
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Panel_Id" Type="int" />
           <Property Name="Member_Id" Type="int" />
+          <Property Name="role_id" Type="int" />
         </EntityType>
         <EntityType Name="Problems_History">
           <Key>
@@ -172,9 +176,11 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="problem_id" Type="int" />
           <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
           <Property Name="description" Type="nvarchar(max)" />
           <Property Name="status" Type="nvarchar" MaxLength="20" />
+          <Property Name="Priority" Type="nvarchar" MaxLength="20" />
           <Property Name="start_date" Type="date" />
           <Property Name="end_date" Type="date" />
           <Property Name="budget" Type="decimal" Precision="18" Scale="2" Nullable="false" />
@@ -191,6 +197,7 @@
           <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
           <Property Name="VisualEvidence" Type="nvarchar(max)" />
           <Property Name="Status" Type="nvarchar" MaxLength="20" />
+          <Property Name="Priority" Type="nvarchar" MaxLength="20" />
           <Property Name="ProblemType" Type="nvarchar" MaxLength="30" />
           <Property Name="Category" Type="nvarchar" MaxLength="30" />
           <Property Name="CreatedAt" Type="datetime" />
@@ -210,14 +217,6 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Role_Name" Type="nvarchar" MaxLength="30" />
-        </EntityType>
-        <EntityType Name="Serve">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Member_id" Type="int" />
-          <Property Name="Panel_id" Type="int" />
         </EntityType>
         <EntityType Name="Votes">
           <Key>
@@ -249,7 +248,6 @@
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Serve" EntityType="Self.Serve" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Votes" EntityType="Self.Votes" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
@@ -294,6 +292,7 @@
           <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Date" Type="DateTime" Precision="0" />
           <Property Name="JoinCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DisplayPicture" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="CouncilMembers">
           <Key>
@@ -333,6 +332,8 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="council_id" Type="Int32" Nullable="false" />
           <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="problem_id" Type="Int32" />
+          <Property Name="project_id" Type="Int32" />
           <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="scheduled_date" Type="DateTime" Nullable="false" Precision="3" />
@@ -396,6 +397,7 @@
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Panel_Id" Type="Int32" />
           <Property Name="Member_Id" Type="Int32" />
+          <Property Name="role_id" Type="Int32" />
         </EntityType>
         <EntityType Name="Problems_History">
           <Key>
@@ -424,9 +426,11 @@
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="problem_id" Type="Int32" />
           <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Priority" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="start_date" Type="DateTime" Precision="0" />
           <Property Name="end_date" Type="DateTime" Precision="0" />
           <Property Name="budget" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
@@ -443,6 +447,7 @@
           <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="VisualEvidence" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Priority" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
           <Property Name="ProblemType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="Category" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="CreatedAt" Type="DateTime" Precision="3" />
@@ -462,14 +467,6 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Role_Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Serve">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Member_id" Type="Int32" />
-          <Property Name="Panel_id" Type="Int32" />
         </EntityType>
         <EntityType Name="Votes">
           <Key>
@@ -501,7 +498,6 @@
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
           <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" />
           <EntitySet Name="Role" EntityType="Self.Role" />
-          <EntitySet Name="Serve" EntityType="Self.Serve" />
           <EntitySet Name="Votes" EntityType="Self.Votes" />
         </EntityContainer>
       </Schema>
@@ -549,6 +545,7 @@
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="JoinCode" ColumnName="JoinCode" />
+                <ScalarProperty Name="DisplayPicture" ColumnName="DisplayPicture" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -592,6 +589,8 @@
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="council_id" ColumnName="council_id" />
                 <ScalarProperty Name="title" ColumnName="title" />
+                <ScalarProperty Name="problem_id" ColumnName="problem_id" />
+                <ScalarProperty Name="project_id" ColumnName="project_id" />
                 <ScalarProperty Name="description" ColumnName="description" />
                 <ScalarProperty Name="address" ColumnName="address" />
                 <ScalarProperty Name="scheduled_date" ColumnName="scheduled_date" />
@@ -660,6 +659,7 @@
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Panel_Id" ColumnName="Panel_Id" />
                 <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
+                <ScalarProperty Name="role_id" ColumnName="role_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -691,9 +691,11 @@
             <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Projects">
               <MappingFragment StoreEntitySet="Projects">
                 <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="problem_id" ColumnName="problem_id" />
                 <ScalarProperty Name="title" ColumnName="title" />
                 <ScalarProperty Name="description" ColumnName="description" />
                 <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="Priority" ColumnName="Priority" />
                 <ScalarProperty Name="start_date" ColumnName="start_date" />
                 <ScalarProperty Name="end_date" ColumnName="end_date" />
                 <ScalarProperty Name="budget" ColumnName="budget" />
@@ -711,6 +713,7 @@
                 <ScalarProperty Name="Description" ColumnName="Description" />
                 <ScalarProperty Name="VisualEvidence" ColumnName="VisualEvidence" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Priority" ColumnName="Priority" />
                 <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
                 <ScalarProperty Name="Category" ColumnName="Category" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
@@ -732,15 +735,6 @@
               <MappingFragment StoreEntitySet="Role">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Serve">
-            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Serve">
-              <MappingFragment StoreEntitySet="Serve">
-                <ScalarProperty Name="id" ColumnName="id" />
-                <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-                <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

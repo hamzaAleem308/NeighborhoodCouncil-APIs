@@ -19,6 +19,7 @@ namespace NcDemo.Models
         public string Description { get; set; }
         public string VisualEvidence { get; set; }
         public string Status { get; set; }
+        public string Priority { get; set; }
         public string ProblemType { get; set; }
         public string Category { get; set; }
         public Nullable<System.DateTime> CreatedAt { get; set; }

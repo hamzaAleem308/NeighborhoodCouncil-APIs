@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -118,7 +119,7 @@ namespace NcDemo.Controllers
                     problem.Category,
                     problem.CreatedAt,
                     VisualEvidence = !string.IsNullOrEmpty(problem.VisualEvidence)
-                        ? new Uri(HttpContext.Current.Request.Url, problem.VisualEvidence).AbsoluteUri
+                        ? (problem.VisualEvidence)
                         : null,
                     problem.MemberId,
                     problem.CouncilId
@@ -172,5 +173,198 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError , ee);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage SetStatusToOpen(int problemId)
+        {
+            try
+            {
+                var problem = db.Report_Problem.Find(problemId);
+                if (problem == null)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Found");
+
+                problem.Status = "Opened";
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Status Set to Opened");
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+        [HttpPost]
+        public HttpResponseMessage SetStatusToClose(int problemId)
+        {
+            try
+            {
+                var problem = db.Report_Problem.Find(problemId);
+                if (problem == null)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Found");
+
+                problem.Status = "Closed";
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Status Set to Closed");
+            }
+            catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+        [HttpGet]
+        public HttpResponseMessage GetProblemHierarchy(int problemId)
+        {
+            try
+            {
+                // Fetch the raw problem details (simplified query)
+                var rawProblem = db.Report_Problem
+                    .Where(p => p.id == problemId)
+                    .Select(p => new
+                    {
+                        ProblemId = p.id,
+                        Title = p.title,
+                        Description = p.Description,
+                        Status = p.Status,
+                        ProblemType = p.ProblemType,
+                        Category = p.Category,
+                        CreatedAt = p.CreatedAt,
+                        VisualEvidence = p.VisualEvidence
+                    })
+                    .FirstOrDefault();
+
+                if (rawProblem == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Message = "Problem not found.",
+                        StatusCode = 404
+                    });
+                }
+
+                // Fetch related MemberId and CouncilId from Report_Problem_Info (separate query)
+                var problemInfo = db.Report_Problem_info
+                    .Where(dpi => dpi.Report_Problem_id == problemId)
+                    .Select(dpi => new
+                    {
+                        dpi.Member_id,
+                        dpi.Council_id
+                    })
+                    .FirstOrDefault();
+
+                // Fetch meetings linked to the problem
+                var rawMeetings = db.Meetings
+                    .Where(m => m.problem_id == problemId)
+                    .Select(m => new
+                    {
+                        MeetingId = m.id,
+                        Title = m.title,
+                        Description = m.description,
+                        Address = m.address,
+                        ScheduledDate = m.scheduled_date,
+                        MeetingType = m.meeting_type
+                    })
+                    .ToList();
+
+                // Fetch projects linked to the problem
+                var rawProjects = db.Projects
+                    .Where(pr => pr.problem_id == problemId)
+                    .Select(pr => new
+                    {
+                        ProjectId = pr.id,
+                        Title = pr.title,
+                        Description = pr.description,
+                        Status = pr.status,
+                        Priority = pr.Priority,
+                        StartDate = pr.start_date,
+                        EndDate = pr.end_date,
+                        Budget = pr.budget
+                    })
+                    .ToList();
+
+                // Fetch project logs linked to the projects
+                var projectIds = rawProjects.Select(pr => pr.ProjectId).ToList();
+                var rawProjectLogs = db.Project_Logs
+                    .Where(pl => projectIds.Contains(pl.project_id))
+                    .Select(pl => new
+                    {
+                        LogId = pl.id,
+                        ProjectId = pl.project_id,
+                        ActionTaken = pl.action_taken,
+                        ActionDate = pl.action_date,
+                        Status = pl.status,
+                        Comments = pl.comments,
+                        AmountSpent = pl.amount_spent,
+                        Feedback = pl.feedback
+                    })
+                    .ToList();
+
+                // Transform the data in memory
+                var transformedProblem = new
+                {
+                    rawProblem.ProblemId,
+                    rawProblem.Title,
+                    rawProblem.Description,
+                    rawProblem.Status,
+                    rawProblem.ProblemType,
+                    rawProblem.Category,
+                    rawProblem.CreatedAt,
+                    VisualEvidence = !string.IsNullOrEmpty(rawProblem.VisualEvidence) ? rawProblem.VisualEvidence : null,
+                    MemberId = problemInfo?.Member_id,
+                    CouncilId = problemInfo?.Council_id,
+                    Meetings = rawMeetings.Select(m => new
+                    {
+                        m.MeetingId,
+                        m.Title,
+                        m.Description,
+                        m.Address,
+                        m.ScheduledDate,
+                        m.MeetingType
+                    }).ToList(),
+                    Projects = rawProjects.Select(p => new
+                    {
+                        p.ProjectId,
+                        p.Title,
+                        p.Description,
+                        p.Status,
+                        p.Priority,
+                        p.StartDate,
+                        p.EndDate,
+                        p.Budget,
+                        Logs = rawProjectLogs
+                            .Where(pl => pl.ProjectId == p.ProjectId)
+                            .Select(pl => new
+                            {
+                                pl.LogId,
+                                pl.ActionTaken,
+                                pl.ActionDate,
+                                pl.Status,
+                                pl.Comments,
+                                pl.AmountSpent,
+                                pl.Feedback
+                            })
+                            .ToList()
+                    }).ToList()
+                };
+
+                // Return the transformed data
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Message = "Hierarchy fetched successfully.",
+                    StatusCode = 200,
+                    Data = transformedProblem
+                });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Message = "An error occurred while fetching the hierarchy.",
+                    ExceptionMessage = ex.Message,
+                    StatusCode = 500
+                });
+            }
+        }
+
+
     }
 }

@@ -22,6 +22,8 @@ namespace NcDemo.Controllers
                     title = meeting.title,
                     description = meeting.description,
                     address = meeting.address,
+                    problem_id = meeting.problem_id,
+                    project_id = meeting.project_id,
                     council_id = meeting.council_id,
                     scheduled_date = meeting.scheduled_date,
                     created_at = DateTime.Now,

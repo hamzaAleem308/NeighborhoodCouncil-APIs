@@ -44,7 +44,6 @@ namespace NcDemo.Models
         public virtual DbSet<Report_Problem> Report_Problem { get; set; }
         public virtual DbSet<Report_Problem_info> Report_Problem_info { get; set; }
         public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<Serve> Serve { get; set; }
         public virtual DbSet<Votes> Votes { get; set; }
     }
 }

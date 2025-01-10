@@ -8,6 +8,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.IO;
+using System.Web;
+
+
 
 namespace NcDemo.Controllers
 {
@@ -78,36 +82,81 @@ namespace NcDemo.Controllers
         }
 
 
+        /*
+                [HttpGet]
+                public HttpResponseMessage GetCouncils(int memberId)
+                {
+                    try
+                    {  // Fetch all council memberships for the given memberId
+                        var councilMemberships = db.CouncilMembers.Where(cm => cm.Member_Id == memberId).ToList();
+
+                        if (!councilMemberships.Any())
+                        {
+                            return Request.CreateResponse(HttpStatusCode.NoContent, "No councils found for this member.");
+                        }
+
+                        // Extract council ids 
+                        var councilIds = councilMemberships.Select(cm => cm.Council_Id).ToList();
+
+                        // Fetch councils that match the council ids
+                        var councils = db.Council.Where(c => councilIds.Contains(c.id)).ToList();
+
+                        if (!councils.Any())
+                        {
+                            return Request.CreateResponse(HttpStatusCode.NoContent, "No matching councils found.");
+                        }
+
+                        return Request.CreateResponse(HttpStatusCode.OK, councils);
+                    }
+                    catch (Exception ee) {
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "An errord Occured" + ee);
+                    }
+                }*/
 
         [HttpGet]
         public HttpResponseMessage GetCouncils(int memberId)
         {
             try
-            {  // Fetch all council memberships for the given memberId
-                var councilMemberships = db.CouncilMembers.Where(cm => cm.Member_Id == memberId).ToList();
+            {
+                var councilMemberships = db.CouncilMembers
+                    .Where(cm => cm.Member_Id == memberId)
+                    .ToList();
 
                 if (!councilMemberships.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No councils found for this member.");
                 }
 
-                // Extract council ids 
                 var councilIds = councilMemberships.Select(cm => cm.Council_Id).ToList();
 
-                // Fetch councils that match the council ids
-                var councils = db.Council.Where(c => councilIds.Contains(c.id)).ToList();
+                var councils = db.Council
+                    .Where(c => councilIds.Contains(c.id))
+                    .ToList();
 
-                if (!councils.Any())
+                var baseUrl = Request.RequestUri.GetLeftPart(UriPartial.Authority);
+
+                var result = councils.Select(c => new
+                {
+                    c.id,
+                    c.Name,
+                    c.Description,
+                    c.Date,
+                    DisplayPictureUrl = c.DisplayPicture
+                }).ToList();
+
+                if (!result.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No matching councils found.");
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, councils);
+                return Request.CreateResponse(HttpStatusCode.OK, result);
             }
-            catch (Exception ee) {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An errord Occured" + ee);
+            catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ee.Message);
             }
         }
+
 
         [HttpGet]
         public HttpResponseMessage GetUserType(int memberId, int councilId)
@@ -128,47 +177,102 @@ namespace NcDemo.Controllers
     
 
 
-        [HttpPost]
-        public HttpResponseMessage PostCouncils(Council council, int memberId)
+     
+    [HttpPost]
+    public HttpResponseMessage PostCouncils()
+    {
+        try
         {
-            try
-            { 
-                Council council1 = new Council()
-                {
-                    Name = council.Name,
-                    Description = council.Description,
-                    Date = DateTime.Now,
-                };
-                db.Council.Add(council1);
-                db.SaveChanges();
-
-                var setCode = db.Council.FirstOrDefault(cm => cm.id == council1.id);
-
-                if(setCode != null)
-                {
-                    setCode.JoinCode = CodeGenerator.GenerateJoinCode(council1.id);
-                }
-               
-                CouncilMembers councilMember = new CouncilMembers
-                {
-                    Member_Id = memberId,
-                    Council_Id = council1.id,
-                    Role_Id = 1,   // Id: 1 == 'Admin'
-                    Panel_Id = 0,
-                };
-
-              
-                db.CouncilMembers.Add(councilMember);
-                db.SaveChanges(); 
-
-                return Request.CreateResponse(HttpStatusCode.OK, council.Name + " Added Successfully!");
-            }
-            catch (Exception ex)
+            // Check if the request contains multipart/form-data.
+            if (!Request.Content.IsMimeMultipartContent())
             {
-               
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+                return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
             }
+
+            // Get the memberId from the query parameters.
+            var memberId = HttpContext.Current.Request.Params["memberId"];
+            if (string.IsNullOrEmpty(memberId))
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "memberId is required.");
+            }
+
+            // Get other form data (e.g., Name and Description).
+            var name = HttpContext.Current.Request.Params["Name"];
+            var description = HttpContext.Current.Request.Params["Description"];
+
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(description))
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "Name and Description are required.");
+            }
+
+            // Process uploaded image if provided.
+            string imagePath = null;
+            var httpRequest = HttpContext.Current.Request;
+            if (httpRequest.Files.Count > 0)
+            {
+                var postedFile = httpRequest.Files[0];
+                if (postedFile != null && postedFile.ContentLength > 0)
+                {
+                    // Ensure the folder for storing images exists.
+                    string folderPath = HttpContext.Current.Server.MapPath("~/displayPictures");
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+
+                    // Generate a unique filename and save the file.
+                    string fileName = Path.GetFileNameWithoutExtension(postedFile.FileName);
+                    string extension = Path.GetExtension(postedFile.FileName);
+                    string uniqueFileName = $"{fileName}_{Guid.NewGuid()}{extension}";
+                    imagePath = Path.Combine(folderPath, uniqueFileName);
+                    postedFile.SaveAs(imagePath);
+
+                    // Store relative path to serve it later.
+                    imagePath = $"/displayPictures/{uniqueFileName}";
+                }
+            }
+            else
+            {
+                // Set default image if no file is uploaded.
+                imagePath = "/displayPictures/default.png";
+            }
+
+            // Save the council to the database.
+            Council council = new Council
+            {
+                Name = name,
+                Description = description,
+                Date = DateTime.Now,
+                DisplayPicture = imagePath // Save the image path.
+            };
+            db.Council.Add(council);
+            db.SaveChanges();
+
+            // Generate and update the join code.
+            var setCode = db.Council.FirstOrDefault(cm => cm.id == council.id);
+            if (setCode != null)
+            {
+                setCode.JoinCode = CodeGenerator.GenerateJoinCode(council.id);
+            }
+
+            // Save the admin as a council member.
+            CouncilMembers councilMember = new CouncilMembers
+            {
+                Member_Id = int.Parse(memberId),
+                Council_Id = council.id,
+                Role_Id = 1,   // Id: 1 == 'Admin'
+                Panel_Id = 0,
+            };
+            db.CouncilMembers.Add(councilMember);
+            db.SaveChanges();
+
+            return Request.CreateResponse(HttpStatusCode.OK, $"{name} Added Successfully!");
         }
+        catch (Exception ex)
+        {
+            return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+        }
+    }
 
         [HttpPost]
         public HttpResponseMessage JoinCouncilUsingCode(int memberId, string joinCode)

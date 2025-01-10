@@ -40,6 +40,7 @@
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="Date" ColumnName="Date" />
           <ScalarProperty Name="JoinCode" ColumnName="JoinCode" />
+          <ScalarProperty Name="DisplayPicture" ColumnName="DisplayPicture" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -83,6 +84,8 @@
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="council_id" ColumnName="council_id" />
           <ScalarProperty Name="title" ColumnName="title" />
+          <ScalarProperty Name="problem_id" ColumnName="problem_id" />
+          <ScalarProperty Name="project_id" ColumnName="project_id" />
           <ScalarProperty Name="description" ColumnName="description" />
           <ScalarProperty Name="address" ColumnName="address" />
           <ScalarProperty Name="scheduled_date" ColumnName="scheduled_date" />
@@ -151,6 +154,7 @@
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Panel_Id" ColumnName="Panel_Id" />
           <ScalarProperty Name="Member_Id" ColumnName="Member_Id" />
+          <ScalarProperty Name="role_id" ColumnName="role_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -182,9 +186,11 @@
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Projects">
         <MappingFragment StoreEntitySet="Projects">
           <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="problem_id" ColumnName="problem_id" />
           <ScalarProperty Name="title" ColumnName="title" />
           <ScalarProperty Name="description" ColumnName="description" />
           <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
           <ScalarProperty Name="start_date" ColumnName="start_date" />
           <ScalarProperty Name="end_date" ColumnName="end_date" />
           <ScalarProperty Name="budget" ColumnName="budget" />
@@ -202,6 +208,7 @@
           <ScalarProperty Name="Description" ColumnName="Description" />
           <ScalarProperty Name="VisualEvidence" ColumnName="VisualEvidence" />
           <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
           <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
           <ScalarProperty Name="Category" ColumnName="Category" />
           <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
@@ -223,15 +230,6 @@
         <MappingFragment StoreEntitySet="Role">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Serve">
-      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Serve">
-        <MappingFragment StoreEntitySet="Serve">
-          <ScalarProperty Name="id" ColumnName="id" />
-          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
-          <ScalarProperty Name="Panel_id" ColumnName="Panel_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

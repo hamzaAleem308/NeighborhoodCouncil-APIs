@@ -20,7 +20,7 @@ namespace NcDemo.Controllers
             {
                 if(project == null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Data Found for payload");
                 }
 
                 var newProject = new Projects
@@ -28,6 +28,8 @@ namespace NcDemo.Controllers
                     title = project.title,
                     description = project.description,
                     status = "Pending",
+                    Priority = project.Priority,
+                    problem_id = project.problem_id,
                     start_date = DateTime.Now,
                     end_date = DateTime.Now,
                     budget = project.budget,
@@ -41,6 +43,25 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
             catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+        [HttpPost]
+        public HttpResponseMessage UpdateProjectPriority(int projectId, string newPriority)
+        {
+            try
+            {
+                var project =db.Projects.Find(projectId);
+                if (project == null)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No problem Found");
+                project.Priority = newPriority;
+
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch(Exception ee)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }

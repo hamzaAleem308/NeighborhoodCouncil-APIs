@@ -17,6 +17,8 @@ namespace NcDemo.Models
         public int id { get; set; }
         public int council_id { get; set; }
         public string title { get; set; }
+        public Nullable<int> problem_id { get; set; }
+        public Nullable<int> project_id { get; set; }
         public string description { get; set; }
         public string address { get; set; }
         public System.DateTime scheduled_date { get; set; }

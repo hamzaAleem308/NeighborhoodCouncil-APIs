@@ -37,6 +37,7 @@
     <Property Name="Description" Type="nvarchar" MaxLength="255" />
     <Property Name="Date" Type="date" />
     <Property Name="JoinCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="DisplayPicture" Type="nvarchar" MaxLength="255" />
   </EntityType>
   <EntityType Name="CouncilMembers">
     <Key>
@@ -76,6 +77,8 @@
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="council_id" Type="int" Nullable="false" />
     <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="problem_id" Type="int" />
+    <Property Name="project_id" Type="int" />
     <Property Name="description" Type="nvarchar" MaxLength="255" />
     <Property Name="address" Type="nvarchar(max)" Nullable="false" />
     <Property Name="scheduled_date" Type="datetime" Nullable="false" />
@@ -139,6 +142,7 @@
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Panel_Id" Type="int" />
     <Property Name="Member_Id" Type="int" />
+    <Property Name="role_id" Type="int" />
   </EntityType>
   <EntityType Name="Problems_History">
     <Key>
@@ -167,9 +171,11 @@
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="problem_id" Type="int" />
     <Property Name="title" Type="nvarchar" MaxLength="100" Nullable="false" />
     <Property Name="description" Type="nvarchar(max)" />
     <Property Name="status" Type="nvarchar" MaxLength="20" />
+    <Property Name="Priority" Type="nvarchar" MaxLength="20" />
     <Property Name="start_date" Type="date" />
     <Property Name="end_date" Type="date" />
     <Property Name="budget" Type="decimal" Precision="18" Scale="2" Nullable="false" />
@@ -186,6 +192,7 @@
     <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
     <Property Name="VisualEvidence" Type="nvarchar(max)" />
     <Property Name="Status" Type="nvarchar" MaxLength="20" />
+    <Property Name="Priority" Type="nvarchar" MaxLength="20" />
     <Property Name="ProblemType" Type="nvarchar" MaxLength="30" />
     <Property Name="Category" Type="nvarchar" MaxLength="30" />
     <Property Name="CreatedAt" Type="datetime" />
@@ -205,14 +212,6 @@
     </Key>
     <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Role_Name" Type="nvarchar" MaxLength="30" />
-  </EntityType>
-  <EntityType Name="Serve">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Member_id" Type="int" />
-    <Property Name="Panel_id" Type="int" />
   </EntityType>
   <EntityType Name="Votes">
     <Key>
@@ -244,7 +243,6 @@
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Serve" EntityType="Self.Serve" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Votes" EntityType="Self.Votes" Schema="dbo" store:Type="Tables" />
   </EntityContainer>
 </Schema>

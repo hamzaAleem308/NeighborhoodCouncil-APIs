@@ -19,5 +19,6 @@ namespace NcDemo.Models
         public string Description { get; set; }
         public Nullable<System.DateTime> Date { get; set; }
         public string JoinCode { get; set; }
+        public string DisplayPicture { get; set; }
     }
 }

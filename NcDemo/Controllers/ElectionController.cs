@@ -93,7 +93,7 @@ namespace NcDemo.Controllers
             {
                 // Extract values from the request object
                 int candidateId = request.CandidateId;
-                int[] panelMembersId = request.PanelMembersId;
+                List<PanelMemberDto> panelMembersDto = request.PanelMembers;
                 string panelName = request.PanelName;
                 int councilId = request.CouncilId;
                 int MemberId = request.MemberId;
@@ -116,40 +116,44 @@ namespace NcDemo.Controllers
                 db.Panel.Add(newPanel);
                 db.SaveChanges(); // Save to generate Panel ID
 
+                // Assign panel ID to council members and prepare panel members
+                var panelMembers = new List<PanelMembers>();
+
                 // Fetch council members manually without using `Contains`
                 var councilMembers = new List<CouncilMembers>();
-                foreach (var memberId in panelMembersId)
+                foreach (var memberDto in panelMembersDto)
                 {
+                    var memberId = memberDto.MemberId;
                     var member = db.CouncilMembers
                         .FirstOrDefault(cm => cm.Member_Id == memberId && cm.Council_Id == councilId);
                     if (member != null)
                     {
                         councilMembers.Add(member);
                     }
-                }
-
-                if (councilMembers == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Members Found for Panel Selection.");
-                }
-
-                // Assign panel ID to council members and prepare panel members
-                var panelMembers = new List<PanelMembers>();
-                foreach (var member in councilMembers)
-                {
-                    member.Panel_Id = newPanel.id; // Assign Panel ID to CouncilMember
 
                     // Prepare PanelMember object
                     var PM = new PanelMembers
                     {
                         Member_Id = member.Member_Id,
-                        Panel_Id = newPanel.id
+                        Panel_Id = newPanel.id,
+                        role_id = memberDto.Role
                     };
                     panelMembers.Add(PM);
                 }
 
                 // Add all PanelMembers to the database at once
                 db.PanelMembers.AddRange(panelMembers);
+
+
+                if (councilMembers == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Members Found for Panel Selection.");
+                }
+
+                foreach (var member in councilMembers)
+                {
+                    member.Panel_Id = newPanel.id; // Assign Panel ID to CouncilMember
+                }
 
                 // Assign the candidate's panel ID to the council member
                 var councilMember = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == candidateId && cm.Council_Id == councilId);
@@ -168,7 +172,7 @@ namespace NcDemo.Controllers
                 {
                     notifications.Add(new Notifications
                     {
-                        council_id = councilId,
+                        //council_id = councilId,
                         member_id = member.Member_Id,
                         title = "You've been Nominated as a Panel Member",
                         message = "Nominations are being made for Committee Selection, and you've been Nominated.",
@@ -192,7 +196,7 @@ namespace NcDemo.Controllers
 
                 var notificationForCandidate = new Notifications 
                 {
-                    council_id = councilId,
+                    //council_id = councilId,
                     member_id = candidateId,
                     title = "You've been Nominated as a Panel Chairman",
                     message = "Nominations are being made for Committee Selection, and you've been Nominated.",
@@ -214,12 +218,16 @@ namespace NcDemo.Controllers
         public class NominateCandidateRequest
         {
             public int CandidateId { get; set; }
-            public int[] PanelMembersId { get; set; }
+            public List<PanelMemberDto> PanelMembers { get; set; }
             public string PanelName { get; set; }
             public int CouncilId { get; set; }
             public int MemberId { get; set; }
         }
-
+        public class PanelMemberDto
+        {
+            public int MemberId { get; set; }
+            public int Role { get; set; }
+        }
 
 
 
@@ -273,8 +281,6 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "An internal server error occurred: " + ex.Message);
             }
         }
-
-
         public class RemoveCandidateRequest
         {
             public int CandidateId { get; set; }
@@ -286,7 +292,7 @@ namespace NcDemo.Controllers
         {
             try
             {
-                var nomination = db.Panel.Where(p => p.created_by == memberId).
+                var nomination = db.Panel.Where(p => p.created_by == memberId && p.council_Id == councilId).
                     Select(c => new
                     {
                         CandidateId = c.Candidate_Id,
@@ -297,8 +303,10 @@ namespace NcDemo.Controllers
                             .Select(pm => new
                             {
                                 MemberId = pm.Member_Id,
-                                MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name
+                                MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name,
+                                MemberRole = db.Role.FirstOrDefault(r => r.id == pm.role_id).Role_Name
                             }).ToList()
+                      
                     }).ToList();
 
                 if(nomination == null)
@@ -331,7 +339,8 @@ namespace NcDemo.Controllers
                             .Select(pm => new
                             {
                                 MemberId = pm.Member_Id,
-                                MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name
+                                MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name,
+                                MemberRole = db.Role.FirstOrDefault(r => r.id == pm.role_id).Role_Name
                             }).ToList()
                     }).ToList();
 
@@ -412,7 +421,8 @@ namespace NcDemo.Controllers
                                     .Select(pm => new
                                     {
                                         MemberId = pm.Member_Id,
-                                        MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name
+                                        MemberName = db.Member.FirstOrDefault(cm => cm.id == pm.Member_Id).Full_Name,
+                                        MemberRole = db.Role.FirstOrDefault(r => r.id == pm.role_id).Role_Name
                                     }).ToList()
                               }).ToList();
 
@@ -448,82 +458,155 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-    /// <summary>
-    /// Closing Election API to close election and assign desired role
-    /// </summary>
-    /// <param name="electionId" name ='councilId'></param>
-    /// <returns></returns>
+        /// <summary>
+        /// Closing Election API to close election and assign desired role
+        /// </summary>
+        /// <param name="electionId" name ='councilId'></param>
+        /// <returns></returns>
         [HttpPost]
         public HttpResponseMessage CloseElection(int electionId, int councilId)
         {
-            try
+            using (var transaction = db.Database.BeginTransaction())
             {
-                var election = db.Elections.Find(electionId);
-                if (election == null)
-                    return Request.CreateResponse(HttpStatusCode.NotFound, "Election not found");
-
-                if (election.status == "Closed")
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Election is already closed");
-
-                // Retrieve candidates and votes for the election
-                var candidates = db.Votes
-                    .Where(v => v.Election_id == electionId)
-                    .GroupBy(v => v.Candidate_id)
-                    .Select(g => new
-                    {
-                        CandidateId = g.Key,
-                        VoteCount = g.Count()
-                    })
-                    .OrderByDescending(c => c.VoteCount)
-                    .ToList();
-
-                if (candidates.Count == 0)
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No votes found for this election");
-
-                // Determine the winner (candidate with the most votes)
-                var winningCandidateId = candidates.First().CandidateId;
-
-                // Find winning member in member table
-                var memberData = db.Candidates.Find(winningCandidateId);
-                var member = memberData.member_id;
-
-                // Fetch winner's member details from Members table
-                var winnerMember = db.Member.Find(member);
-                if (winnerMember == null)
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Winning candidate not found in Members table");
-                
-                // Fetch ref of member in CM table to update role of winner
-                var getWinnerIdFromCM = db.CouncilMembers.FirstOrDefault(cm => cm.Member_Id == member && cm.Council_Id == councilId);
-                if(getWinnerIdFromCM == null)
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Member not found in council members table");
-
-                // Update the winning candidate's role to "Chairman"
-                var chairmanRole = db.Role.FirstOrDefault(r => r.Role_Name == "Chairperson");
-                if (chairmanRole == null)
-                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Chairman role not found in roles table");
-
-                getWinnerIdFromCM.Role_Id = chairmanRole.id;
-
-                // Close the election
-                election.status = "Closed";
-                db.SaveChanges();
-
-                // Return winner details in the response
-                var result = new
+                try
                 {
-                    WinnerId = winnerMember.id,
-                    WinnerName = winnerMember.Full_Name,
-                    Role = chairmanRole.Role_Name,
-                    TotalVotes = candidates.First().VoteCount
-                };
+                    // Step 1: Validate the election
+                    var election = db.Elections.Find(electionId);
+                    if (election == null)
+                        return Request.CreateResponse(HttpStatusCode.NotFound, "Election not found");
 
-                return Request.CreateResponse(HttpStatusCode.OK, result);
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+                    if (election.status == "Closed")
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Election is already closed");
+
+                    // Step 2: Retrieve and validate votes with candidates
+                    var topCandidatePanel = db.Votes
+                        .Where(v => v.Election_id == electionId)
+                        .GroupBy(v => v.Candidate_id)
+                        .Select(g => new
+                        {
+                            CandidateId = g.Key,
+                            VoteCount = g.Count()
+                        })
+                        .OrderByDescending(c => c.VoteCount)
+                        .Join(db.Candidates,
+                              voteGroup => voteGroup.CandidateId,
+                              candidate => candidate.candidate_id,
+                              (voteGroup, candidate) => new
+                              {
+                                  CandidateId = voteGroup.CandidateId,
+                                  PanelId = candidate.panel_id,
+                                  VoteCount = voteGroup.VoteCount
+                              })
+                        .FirstOrDefault(); // Get the top candidate with their panel_id
+
+                    if (topCandidatePanel == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "No valid candidates or votes found for this election");
+
+                    // Step 3: Get the panel of the winning candidate
+                    var panel = db.Panel.FirstOrDefault(t => t.id == topCandidatePanel.PanelId);
+                    if (panel == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Winning candidate's panel not found");
+
+                    var panelId = panel.id;
+
+                    // Step 4: Update roles for panel members and notify them
+                    var panelMembers = db.PanelMembers.Where(pm => pm.Panel_Id == panelId).ToList();
+                    var councilMembers = db.CouncilMembers.Where(cm => cm.Panel_Id == panelId).ToList();
+
+                    if (!panelMembers.Any())
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "No panel members found for the winning panel");
+
+                    if (!councilMembers.Any())
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "No council members found for the winning panel");
+
+                    var notifications = new List<Notifications>();
+                    foreach (var cm in councilMembers)
+                    {
+                        var matchingPanelMember = panelMembers.FirstOrDefault(pm => pm.Member_Id == cm.Member_Id);
+                        if (matchingPanelMember != null)
+                        {
+                            cm.Role_Id = (int)matchingPanelMember.role_id;
+
+                            // Create a notification for the council member
+                            notifications.Add(new Notifications
+                            {
+                                title = "Congratulations! Your panel has won the election",
+                                module = "Election",
+                                //council_id = councilId,
+                                member_id = cm.Member_Id,
+                                message = "You have been assigned a new role in the council.",
+                                created_at = DateTime.Now,
+                                updated_at = DateTime.Now
+                            });
+                        }
+                    }
+                    db.Notifications.AddRange(notifications);
+
+                    // Step 5: Update the winner's role to "Chairman"
+                    var winner = db.Candidates.FirstOrDefault(c => c.candidate_id == topCandidatePanel.CandidateId);
+                    if (winner == null)
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Winning candidate not found in Candidates table");
+
+                    var winnerMemberId = winner.member_id;
+
+                    var notifyForChairman = new Notifications
+                    {
+                        title = "You are now the Chairman of the Council",
+                        message = "You are now responsible for major tasks in the council",
+                        module = "Election",
+                        member_id = winnerMemberId,
+                        //council_id = councilId,
+                        created_at = DateTime.Now,
+                        updated_at = DateTime.Now
+                    };
+                    db.Notifications.Add(notifyForChairman);
+
+
+                    // Step 6: Find and assign the Chairman role
+                    var chairmanRole = db.Role.FirstOrDefault(r => r.Role_Name == "Chairperson");
+                    if (chairmanRole == null)
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Chairman role not found in roles table");
+
+                    var winnerCouncilMember = db.CouncilMembers
+                        .FirstOrDefault(cm => cm.Member_Id == winnerMemberId && cm.Council_Id == councilId);
+                    if (winnerCouncilMember == null)
+                        return Request.CreateResponse(HttpStatusCode.InternalServerError, "Winning candidate not found in CouncilMembers table");
+
+                    winnerCouncilMember.Role_Id = chairmanRole.id;
+
+                    // Step 7: Revert all Panel_Id values in CouncilMembers to 0
+                    var allCouncilMembers = db.CouncilMembers.Where(c => c.Council_Id == councilId).ToList();
+                    foreach (var cm in allCouncilMembers)
+                    {
+                        cm.Panel_Id = 0;
+                    }
+
+                    // Step 8: Close the election
+                    election.status = "Closed";
+                    db.SaveChanges();
+
+                    transaction.Commit();
+
+                    // Step 9: Return winner details
+                    var result = new
+                    {
+                        WinnerId = winnerMemberId,
+                        WinnerName = db.Member.Find(winnerMemberId)?.Full_Name ?? "Unknown",
+                        Role = chairmanRole.Role_Name,
+                        TotalVotes = topCandidatePanel.VoteCount
+                    };
+
+                    return Request.CreateResponse(HttpStatusCode.OK, result);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, $"An error occurred: {ex.Message}");
+                }
             }
         }
+
+
 
 
         [HttpGet]
@@ -581,7 +664,7 @@ namespace NcDemo.Controllers
                         ElectionName = e.Name,
                         Status = e.status,
                         Candidates = db.Candidates
-                            .Where(c => c.council_id == e.id)
+                            .Where(c => c.council_id == councilId)
                             .Select(c => new
                             {
                                 CandidateId = c.candidate_id,

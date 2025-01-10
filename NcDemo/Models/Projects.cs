@@ -15,9 +15,11 @@ namespace NcDemo.Models
     public partial class Projects
     {
         public int id { get; set; }
+        public Nullable<int> problem_id { get; set; }
         public string title { get; set; }
         public string description { get; set; }
         public string status { get; set; }
+        public string Priority { get; set; }
         public Nullable<System.DateTime> start_date { get; set; }
         public Nullable<System.DateTime> end_date { get; set; }
         public decimal budget { get; set; }

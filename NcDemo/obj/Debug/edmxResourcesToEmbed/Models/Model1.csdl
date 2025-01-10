@@ -37,6 +37,7 @@
     <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="Date" Type="DateTime" Precision="0" />
     <Property Name="JoinCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="DisplayPicture" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="CouncilMembers">
     <Key>
@@ -76,6 +77,8 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="council_id" Type="Int32" Nullable="false" />
     <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="problem_id" Type="Int32" />
+    <Property Name="project_id" Type="Int32" />
     <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="address" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="scheduled_date" Type="DateTime" Nullable="false" Precision="3" />
@@ -139,6 +142,7 @@
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Panel_Id" Type="Int32" />
     <Property Name="Member_Id" Type="Int32" />
+    <Property Name="role_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Problems_History">
     <Key>
@@ -167,9 +171,11 @@
       <PropertyRef Name="id" />
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="problem_id" Type="Int32" />
     <Property Name="title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Priority" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
     <Property Name="start_date" Type="DateTime" Precision="0" />
     <Property Name="end_date" Type="DateTime" Precision="0" />
     <Property Name="budget" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
@@ -186,6 +192,7 @@
     <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="VisualEvidence" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
     <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Priority" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
     <Property Name="ProblemType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
     <Property Name="Category" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
     <Property Name="CreatedAt" Type="DateTime" Precision="3" />
@@ -205,14 +212,6 @@
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Role_Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-  </EntityType>
-  <EntityType Name="Serve">
-    <Key>
-      <PropertyRef Name="id" />
-    </Key>
-    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="Member_id" Type="Int32" />
-    <Property Name="Panel_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Votes">
     <Key>
@@ -244,7 +243,6 @@
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
     <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" />
     <EntitySet Name="Role" EntityType="Self.Role" />
-    <EntitySet Name="Serve" EntityType="Self.Serve" />
     <EntitySet Name="Votes" EntityType="Self.Votes" />
   </EntityContainer>
 </Schema>
