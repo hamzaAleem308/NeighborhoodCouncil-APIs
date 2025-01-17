@@ -402,7 +402,7 @@ namespace NcDemo.Controllers
                               join p in db.Panel on co.id equals p.council_Id
                               join c in db.Candidates on p.id equals c.panel_id
                               join m in db.Member on c.member_id equals m.id
-                              where co.id == councilId
+                              where co.id == councilId && e.status == "Initiated" || e.status == "Active"
                               select new
                               {
                                   ElectionId = e.id,
@@ -480,24 +480,24 @@ namespace NcDemo.Controllers
 
                     // Step 2: Retrieve and validate votes with candidates
                     var topCandidatePanel = db.Votes
-                        .Where(v => v.Election_id == electionId)
-                        .GroupBy(v => v.Candidate_id)
-                        .Select(g => new
-                        {
-                            CandidateId = g.Key,
-                            VoteCount = g.Count()
-                        })
-                        .OrderByDescending(c => c.VoteCount)
-                        .Join(db.Candidates,
-                              voteGroup => voteGroup.CandidateId,
-                              candidate => candidate.candidate_id,
-                              (voteGroup, candidate) => new
-                              {
-                                  CandidateId = voteGroup.CandidateId,
-                                  PanelId = candidate.panel_id,
-                                  VoteCount = voteGroup.VoteCount
-                              })
-                        .FirstOrDefault(); // Get the top candidate with their panel_id
+                         .Where(v => v.Election_id == electionId) // Filter by election
+                         .GroupBy(v => v.Candidate_id) // Group by Candidate_id
+                         .Select(g => new
+                         {
+                             CandidateId = g.Key,
+                             VoteCount = g.Count() // Count votes
+                         })
+                         .OrderByDescending(c => c.VoteCount) // Sort by votes in descending order
+                         .Join(db.Candidates, // Join with Candidates table
+                               voteGroup => voteGroup.CandidateId,
+                               candidate => candidate.candidate_id,
+                               (voteGroup, candidate) => new
+                               {
+                                   CandidateId = voteGroup.CandidateId,
+                                   PanelId = candidate.panel_id,
+                                   VoteCount = voteGroup.VoteCount
+                               })
+                         .FirstOrDefault(); // Fetch the top candidate
 
                     if (topCandidatePanel == null)
                         return Request.CreateResponse(HttpStatusCode.BadRequest, "No valid candidates or votes found for this election");
@@ -615,7 +615,7 @@ namespace NcDemo.Controllers
             try
             {
                 var election = db.Elections
-                    .Where(e => e.Council_id == councilId)
+                    .Where(e => e.Council_id == councilId && e.status == "Active" || e.status == "Initiated")
                     .Select(e => new
                     {
                         ElectionId = e.id,
@@ -657,7 +657,7 @@ namespace NcDemo.Controllers
             try
             {
                 var election = db.Elections
-                    .Where(e => e.Council_id == councilId)
+                    .Where(e => e.Council_id == councilId && e.status == "Active" || e.status == "Initiated")
                     .Select(e => new
                     {
                         ElectionId = e.id,

@@ -67,6 +67,18 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Feedback">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Feedback">
+        <MappingFragment StoreEntitySet="Feedback">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Problem_id" ColumnName="Problem_id" />
+          <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+          <ScalarProperty Name="FeedbackStatus" ColumnName="FeedbackStatus" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Meeting_Minutes">
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Meeting_Minutes">
         <MappingFragment StoreEntitySet="Meeting_Minutes">
@@ -212,6 +224,7 @@
           <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
           <ScalarProperty Name="Category" ColumnName="Category" />
           <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+          <ScalarProperty Name="solver_id" ColumnName="solver_id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -230,6 +243,18 @@
         <MappingFragment StoreEntitySet="Role">
           <ScalarProperty Name="id" ColumnName="id" />
           <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SolverComments">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.SolverComments">
+        <MappingFragment StoreEntitySet="SolverComments">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="Problem_id" ColumnName="Problem_id" />
+          <ScalarProperty Name="Solver_id" ColumnName="Solver_id" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

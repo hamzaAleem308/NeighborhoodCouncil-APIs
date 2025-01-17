@@ -105,7 +105,8 @@ namespace NcDemo.Controllers
                                        CreatedAt = problem.CreatedAt,
                                        VisualEvidence = problem.VisualEvidence,
                                        MemberId = problemInfo.Member_id,
-                                       CouncilId = problemInfo.Council_id
+                                       CouncilId = problemInfo.Council_id,
+                                       SolverId = problem.solver_id
                                    }).ToList();
 
                 // Perform transformations in memory
@@ -122,7 +123,8 @@ namespace NcDemo.Controllers
                         ? (problem.VisualEvidence)
                         : null,
                     problem.MemberId,
-                    problem.CouncilId
+                    problem.CouncilId,
+                    problem.SolverId
                 }).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
@@ -130,11 +132,60 @@ namespace NcDemo.Controllers
             catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
-                
             }
         }
 
 
+        [HttpGet]
+        public HttpResponseMessage GetReportedProblemByMember(int councilId, int memberId)
+        {
+            try
+            {
+                // Fetch raw data from the database
+                var rawProblems = (from problem in db.Report_Problem
+                                   join problemInfo in db.Report_Problem_info
+                                   on problem.id equals problemInfo.Report_Problem_id
+                                   where problemInfo.Council_id == councilId && problemInfo.Member_id == memberId
+                                   select new
+                                   {
+                                       ProblemId = problem.id,
+                                       Title = problem.title,
+                                       Description = problem.Description,
+                                       Status = problem.Status,
+                                       ProblemType = problem.ProblemType,
+                                       Category = problem.Category,
+                                       CreatedAt = problem.CreatedAt,
+                                       VisualEvidence = problem.VisualEvidence,
+                                       MemberId = problemInfo.Member_id,
+                                       CouncilId = problemInfo.Council_id,
+                                       SolverId = problem.solver_id
+                                   }).ToList();
+
+                // Perform transformations in memory
+                var transformedProblems = rawProblems.Select(problem => new
+                {
+                    problem.ProblemId,
+                    problem.Title,
+                    problem.Description,
+                    problem.Status,
+                    problem.ProblemType,
+                    problem.Category,
+                    problem.CreatedAt,
+                    VisualEvidence = !string.IsNullOrEmpty(problem.VisualEvidence)
+                        ? (problem.VisualEvidence)
+                        : null,
+                    problem.MemberId,
+                    problem.CouncilId,
+                    problem.SolverId
+                }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
         [HttpGet]
         public HttpResponseMessage getProblemStatusSummary(int memberId, int councilId)
         {
@@ -183,7 +234,27 @@ namespace NcDemo.Controllers
                 if (problem == null)
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Found");
 
+                var getCouncil = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Council_id;
+
+                var getMember = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Member_id;
+
+                if (getMember == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Member Found For Problem");
+
+                if (getCouncil == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found For Problem");
+
                 problem.Status = "Opened";
+
+                var notify = new Notifications {
+                    council_id = getCouncil,
+                    member_id = getMember,
+                    title = "You're Reported Problem is Now Opened!",
+                    message = $"You're Problem {problem.title} is Now Open",
+                    module = "ReportProblem",
+                    created_at = DateTime.Now,
+                    updated_at = DateTime.Now,
+                };
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Status Set to Opened");
             }
@@ -203,6 +274,27 @@ namespace NcDemo.Controllers
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Found");
 
                 problem.Status = "Closed";
+                
+                var getCouncil = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Council_id;
+
+                var getMember = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Member_id;
+
+                if (getMember == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Member Found For Problem");
+
+                if (getCouncil == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found For Problem");
+
+                var notify = new Notifications
+                {
+                    council_id = getCouncil,
+                    member_id = getMember,
+                    title = "You're Reported Problem is Now Closed!",
+                    message = $"You're Problem {problem.title} is Now Closed, update whether you Happy or Not!",
+                    module = "ReportProblem",
+                    created_at = DateTime.Now,
+                    updated_at = DateTime.Now,
+                };
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Status Set to Closed");
             }
@@ -211,6 +303,55 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage SetProblemSatisfiedOrUnsatisfied(int problemId, string status)
+        {
+            try
+            {
+                var problem = db.Report_Problem.Find(problemId);
+                if (problem == null)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Found");
+
+                if (status == "Satisfied")
+                {
+                    problem.Status = "Completed";
+                }
+                else
+                {
+                    problem.Status = "Pending";
+                }
+                var getCouncil = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Council_id;
+
+                var getMember = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Member_id;
+
+                if (getMember == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Member Found For Problem");
+
+                if (getCouncil == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found For Problem");
+
+                /*var notify = new Notifications
+                {
+                    council_id = getCouncil,
+                    member_id = getMember,
+                    title = "You're are Satisfied on th!",
+                    message = $"You're Problem {problem.title} is , update whether you Happy or Not!",
+                    module = "ReportProblem",
+                    created_at = DateTime.Now,
+                    updated_at = DateTime.Now,
+                };*/
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Status Set As per the Satisfaction Level!");
+
+            }
+           catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+
         [HttpGet]
         public HttpResponseMessage GetProblemHierarchy(int problemId)
         {
@@ -308,7 +449,9 @@ namespace NcDemo.Controllers
                     rawProblem.ProblemType,
                     rawProblem.Category,
                     rawProblem.CreatedAt,
-                    VisualEvidence = !string.IsNullOrEmpty(rawProblem.VisualEvidence) ? rawProblem.VisualEvidence : null,
+                    VisualEvidence = !string.IsNullOrEmpty(rawProblem.VisualEvidence)
+                        ? (rawProblem.VisualEvidence)
+                        : null,
                     MemberId = problemInfo?.Member_id,
                     CouncilId = problemInfo?.Council_id,
                     Meetings = rawMeetings.Select(m => new
@@ -365,6 +508,85 @@ namespace NcDemo.Controllers
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage GetCouncilMembersForAssigning(int councilId)
+        {
+            try
+            {
+                var members = (from cm in db.CouncilMembers
+                               join m in db.Member on cm.Member_Id equals m.id
+                               where cm.Council_Id == councilId && cm.Role_Id != 1 && cm.Role_Id != 2 && cm.Role_Id != 5
+                               select new
+                               {
+                                   MembersId = m.id,
+                                   MembersName = m.Full_Name,
+                                   MemberRole = db.Role.FirstOrDefault(c => c.id == cm.Role_Id).Role_Name
+                               }).ToList();
 
+                if (members == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No members available for this Council Id.");
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, members);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public HttpResponseMessage AssignProblemToPanelMember(int councilId, int solverId, int problemId)
+        {
+            try
+            {
+                var getProblem = db.Report_Problem.Find(problemId);
+                    getProblem.solver_id = solverId;
+
+                var notify = new Notifications { 
+                    member_id = solverId,
+                    council_id = councilId,
+                    title = $"You have been assigned to Solve a Problem",
+                    message = $"{getProblem.title}",
+                    created_at = DateTime.Now,
+                    module = "ReportProblem",
+                    updated_at = DateTime.Now,
+                };
+                db.Notifications.Add(notify);
+                db.SaveChanges();
+                return Request.CreateResponse(HttpStatusCode.OK, "Problem Assigned to " + solverId);
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage FetchMemberById(int memberId, int councilId)
+        {
+            try
+            {
+                var getMember = db.Member.Find(memberId)?.Full_Name;
+
+                var memberRoleId = db.CouncilMembers
+                    .FirstOrDefault(c => c.Member_Id == memberId && c.Council_Id == councilId)?.Role_Id;
+
+                var memberRole = memberRoleId != null
+                    ? db.Role.FirstOrDefault(r => r.id == memberRoleId)?.Role_Name
+                    : null;
+
+                if (getMember == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "Member Not Found");
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { getMember, memberRole });
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
     }
 }

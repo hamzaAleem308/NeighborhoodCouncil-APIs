@@ -60,6 +60,17 @@
     <Property Name="EndDate" Type="DateTime" Precision="3" />
     <Property Name="Council_id" Type="Int32" />
   </EntityType>
+  <EntityType Name="Feedback">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Problem_id" Type="Int32" Nullable="false" />
+    <Property Name="Member_id" Type="Int32" Nullable="false" />
+    <Property Name="FeedbackStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+  </EntityType>
   <EntityType Name="Meeting_Minutes">
     <Key>
       <PropertyRef Name="id" />
@@ -196,6 +207,7 @@
     <Property Name="ProblemType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
     <Property Name="Category" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
     <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+    <Property Name="solver_id" Type="Int32" />
   </EntityType>
   <EntityType Name="Report_Problem_info">
     <Key>
@@ -212,6 +224,17 @@
     </Key>
     <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
     <Property Name="Role_Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="SolverComments">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Problem_id" Type="Int32" Nullable="false" />
+    <Property Name="Solver_id" Type="Int32" Nullable="false" />
+    <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreatedAt" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="Votes">
     <Key>
@@ -230,6 +253,7 @@
     <EntitySet Name="Council" EntityType="Self.Council" />
     <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" />
     <EntitySet Name="Elections" EntityType="Self.Elections" />
+    <EntitySet Name="Feedback" EntityType="Self.Feedback" />
     <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" />
     <EntitySet Name="Meetings" EntityType="Self.Meetings" />
     <EntitySet Name="Member" EntityType="Self.Member" />
@@ -243,6 +267,7 @@
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
     <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" />
     <EntitySet Name="Role" EntityType="Self.Role" />
+    <EntitySet Name="SolverComments" EntityType="Self.SolverComments" />
     <EntitySet Name="Votes" EntityType="Self.Votes" />
   </EntityContainer>
 </Schema>

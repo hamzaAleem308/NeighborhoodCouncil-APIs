@@ -415,5 +415,79 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
+
+        [HttpGet]
+        public HttpResponseMessage getCouncilPanel(int councilId)
+        {
+            try
+            {
+                var getCouncil = db.CouncilMembers.Where(c => c.Council_Id == councilId);
+                return Request.CreateResponse(HttpStatusCode.OK, getCouncil);
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+        public HttpResponseMessage GetCouncilPanelData(int councilId)
+        {
+            try
+            {
+                // Fetch council members for the given council and relevant roles
+                var councilMembers = db.CouncilMembers
+                    .Where(c => c.Council_Id == councilId &&
+                                (c.Role_Id == 3 || c.Role_Id == 4 || c.Role_Id == 5 || c.Role_Id == 6))
+                    .ToList();
+
+                // Ensure members are found
+                if (councilMembers == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Panel Found for the given Council ID.");
+                }
+
+                // Fetch corresponding member details
+                var memberIds = councilMembers.Select(c => c.Member_Id).Distinct().ToList();
+                var members = db.Member.Where(m => memberIds.Contains(m.id)).ToList();
+
+                // Assign roles based on Role_Id
+                var chairmanName = members.FirstOrDefault(m =>
+                    councilMembers.Any(c => c.Member_Id == m.id && c.Role_Id == 5))?.Full_Name;
+                var treasurerName = members.FirstOrDefault(m =>
+                    councilMembers.Any(c => c.Member_Id == m.id && c.Role_Id == 4))?.Full_Name;
+                var councillorName = members.FirstOrDefault(m =>
+                    councilMembers.Any(c => c.Member_Id == m.id && c.Role_Id == 3))?.Full_Name;
+                var secretaryName = members.FirstOrDefault(m =>
+                    councilMembers.Any(c => c.Member_Id == m.id && c.Role_Id == 6))?.Full_Name;
+
+                // Check if any role is unassigned
+               /* if (string.IsNullOrEmpty(chairmanName) ||
+                    string.IsNullOrEmpty(treasurerName) ||
+                    string.IsNullOrEmpty(councillorName) ||
+                    string.IsNullOrEmpty(secretaryName))
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "Some or all panel roles are unassigned.");
+                }*/
+
+                // Construct panel data object
+                var councilPanel = new
+                {
+                    Chairman = chairmanName,
+                    Treasurer = treasurerName,
+                    Councillor = councillorName,
+                    Secretary = secretaryName
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, councilPanel);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and return a friendly error message
+                Console.WriteLine($"Error: {ex.Message}");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred while fetching council panel data.");
+            }
+        }
+
+
     }
 }

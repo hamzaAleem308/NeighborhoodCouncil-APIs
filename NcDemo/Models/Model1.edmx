@@ -65,6 +65,17 @@
           <Property Name="EndDate" Type="datetime" />
           <Property Name="Council_id" Type="int" />
         </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Problem_id" Type="int" Nullable="false" />
+          <Property Name="Member_id" Type="int" Nullable="false" />
+          <Property Name="FeedbackStatus" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="255" />
+          <Property Name="CreatedAt" Type="datetime" />
+        </EntityType>
         <EntityType Name="Meeting_Minutes">
           <Key>
             <PropertyRef Name="id" />
@@ -201,6 +212,7 @@
           <Property Name="ProblemType" Type="nvarchar" MaxLength="30" />
           <Property Name="Category" Type="nvarchar" MaxLength="30" />
           <Property Name="CreatedAt" Type="datetime" />
+          <Property Name="solver_id" Type="int" />
         </EntityType>
         <EntityType Name="Report_Problem_info">
           <Key>
@@ -217,6 +229,17 @@
           </Key>
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Role_Name" Type="nvarchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="SolverComments">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Problem_id" Type="int" Nullable="false" />
+          <Property Name="Solver_id" Type="int" Nullable="false" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Status" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="CreatedAt" Type="datetime" />
         </EntityType>
         <EntityType Name="Votes">
           <Key>
@@ -235,6 +258,7 @@
           <EntitySet Name="Council" EntityType="Self.Council" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Elections" EntityType="Self.Elections" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Feedback" EntityType="Self.Feedback" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
@@ -248,6 +272,7 @@
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SolverComments" EntityType="Self.SolverComments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Votes" EntityType="Self.Votes" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema>
@@ -314,6 +339,17 @@
           <Property Name="StartDate" Type="DateTime" Precision="3" />
           <Property Name="EndDate" Type="DateTime" Precision="3" />
           <Property Name="Council_id" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Feedback">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Problem_id" Type="Int32" Nullable="false" />
+          <Property Name="Member_id" Type="Int32" Nullable="false" />
+          <Property Name="FeedbackStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Meeting_Minutes">
           <Key>
@@ -451,6 +487,7 @@
           <Property Name="ProblemType" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="Category" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="CreatedAt" Type="DateTime" Precision="3" />
+          <Property Name="solver_id" Type="Int32" />
         </EntityType>
         <EntityType Name="Report_Problem_info">
           <Key>
@@ -467,6 +504,17 @@
           </Key>
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Role_Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="SolverComments">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Problem_id" Type="Int32" Nullable="false" />
+          <Property Name="Solver_id" Type="Int32" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CreatedAt" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Votes">
           <Key>
@@ -485,6 +533,7 @@
           <EntitySet Name="Council" EntityType="Self.Council" />
           <EntitySet Name="CouncilMembers" EntityType="Self.CouncilMembers" />
           <EntitySet Name="Elections" EntityType="Self.Elections" />
+          <EntitySet Name="Feedback" EntityType="Self.Feedback" />
           <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" />
           <EntitySet Name="Meetings" EntityType="Self.Meetings" />
           <EntitySet Name="Member" EntityType="Self.Member" />
@@ -498,6 +547,7 @@
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
           <EntitySet Name="Report_Problem_info" EntityType="Self.Report_Problem_info" />
           <EntitySet Name="Role" EntityType="Self.Role" />
+          <EntitySet Name="SolverComments" EntityType="Self.SolverComments" />
           <EntitySet Name="Votes" EntityType="Self.Votes" />
         </EntityContainer>
       </Schema>
@@ -569,6 +619,18 @@
                 <ScalarProperty Name="StartDate" ColumnName="StartDate" />
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="Council_id" ColumnName="Council_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Feedback">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Feedback">
+              <MappingFragment StoreEntitySet="Feedback">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Problem_id" ColumnName="Problem_id" />
+                <ScalarProperty Name="Member_id" ColumnName="Member_id" />
+                <ScalarProperty Name="FeedbackStatus" ColumnName="FeedbackStatus" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -717,6 +779,7 @@
                 <ScalarProperty Name="ProblemType" ColumnName="ProblemType" />
                 <ScalarProperty Name="Category" ColumnName="Category" />
                 <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="solver_id" ColumnName="solver_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -735,6 +798,18 @@
               <MappingFragment StoreEntitySet="Role">
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Role_Name" ColumnName="Role_Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SolverComments">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.SolverComments">
+              <MappingFragment StoreEntitySet="SolverComments">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Problem_id" ColumnName="Problem_id" />
+                <ScalarProperty Name="Solver_id" ColumnName="Solver_id" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

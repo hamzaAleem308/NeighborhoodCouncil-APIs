@@ -31,6 +31,7 @@ namespace NcDemo.Models
         public virtual DbSet<Council> Council { get; set; }
         public virtual DbSet<CouncilMembers> CouncilMembers { get; set; }
         public virtual DbSet<Elections> Elections { get; set; }
+        public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<Meeting_Minutes> Meeting_Minutes { get; set; }
         public virtual DbSet<Meetings> Meetings { get; set; }
         public virtual DbSet<Member> Member { get; set; }
@@ -44,6 +45,7 @@ namespace NcDemo.Models
         public virtual DbSet<Report_Problem> Report_Problem { get; set; }
         public virtual DbSet<Report_Problem_info> Report_Problem_info { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<SolverComments> SolverComments { get; set; }
         public virtual DbSet<Votes> Votes { get; set; }
     }
 }

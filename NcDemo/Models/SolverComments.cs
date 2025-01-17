@@ -12,17 +12,13 @@ namespace NcDemo.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Report_Problem
+    public partial class SolverComments
     {
         public int id { get; set; }
-        public string title { get; set; }
-        public string Description { get; set; }
-        public string VisualEvidence { get; set; }
+        public int Problem_id { get; set; }
+        public int Solver_id { get; set; }
+        public string Comment { get; set; }
         public string Status { get; set; }
-        public string Priority { get; set; }
-        public string ProblemType { get; set; }
-        public string Category { get; set; }
         public Nullable<System.DateTime> CreatedAt { get; set; }
-        public Nullable<int> solver_id { get; set; }
     }
 }
