@@ -116,6 +116,20 @@
           <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Date_joined" Type="date" Nullable="false" />
         </EntityType>
+        <EntityType Name="Monthly_Contributions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="council_id" Type="int" />
+          <Property Name="member_id" Type="int" />
+          <Property Name="month_year" Type="varchar" MaxLength="7" />
+          <Property Name="amount" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="status" Type="varchar" MaxLength="20" />
+          <Property Name="payment_date" Type="datetime" />
+          <Property Name="created_at" Type="datetime" />
+          <Property Name="updated_at" Type="datetime" />
+        </EntityType>
         <EntityType Name="Nomination">
           <Key>
             <PropertyRef Name="id" />
@@ -262,6 +276,7 @@
           <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Monthly_Contributions" EntityType="Self.Monthly_Contributions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
@@ -390,6 +405,20 @@
           <Property Name="Address" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Date_joined" Type="DateTime" Nullable="false" Precision="0" />
+        </EntityType>
+        <EntityType Name="Monthly_Contributions">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="council_id" Type="Int32" />
+          <Property Name="member_id" Type="Int32" />
+          <Property Name="month_year" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+          <Property Name="amount" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="payment_date" Type="DateTime" Precision="3" />
+          <Property Name="created_at" Type="DateTime" Precision="3" />
+          <Property Name="updated_at" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Nomination">
           <Key>
@@ -537,6 +566,7 @@
           <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" />
           <EntitySet Name="Meetings" EntityType="Self.Meetings" />
           <EntitySet Name="Member" EntityType="Self.Member" />
+          <EntitySet Name="Monthly_Contributions" EntityType="Self.Monthly_Contributions" />
           <EntitySet Name="Nomination" EntityType="Self.Nomination" />
           <EntitySet Name="Notifications" EntityType="Self.Notifications" />
           <EntitySet Name="Panel" EntityType="Self.Panel" />
@@ -674,6 +704,21 @@
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Date_joined" ColumnName="Date_joined" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Monthly_Contributions">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Monthly_Contributions">
+              <MappingFragment StoreEntitySet="Monthly_Contributions">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="council_id" ColumnName="council_id" />
+                <ScalarProperty Name="member_id" ColumnName="member_id" />
+                <ScalarProperty Name="month_year" ColumnName="month_year" />
+                <ScalarProperty Name="amount" ColumnName="amount" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="payment_date" ColumnName="payment_date" />
+                <ScalarProperty Name="created_at" ColumnName="created_at" />
+                <ScalarProperty Name="updated_at" ColumnName="updated_at" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

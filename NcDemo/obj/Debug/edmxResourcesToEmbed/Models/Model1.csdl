@@ -111,6 +111,20 @@
     <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
     <Property Name="Date_joined" Type="DateTime" Nullable="false" Precision="0" />
   </EntityType>
+  <EntityType Name="Monthly_Contributions">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="council_id" Type="Int32" />
+    <Property Name="member_id" Type="Int32" />
+    <Property Name="month_year" Type="String" MaxLength="7" FixedLength="false" Unicode="false" />
+    <Property Name="amount" Type="Decimal" Precision="10" Scale="2" />
+    <Property Name="status" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="payment_date" Type="DateTime" Precision="3" />
+    <Property Name="created_at" Type="DateTime" Precision="3" />
+    <Property Name="updated_at" Type="DateTime" Precision="3" />
+  </EntityType>
   <EntityType Name="Nomination">
     <Key>
       <PropertyRef Name="id" />
@@ -257,6 +271,7 @@
     <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" />
     <EntitySet Name="Meetings" EntityType="Self.Meetings" />
     <EntitySet Name="Member" EntityType="Self.Member" />
+    <EntitySet Name="Monthly_Contributions" EntityType="Self.Monthly_Contributions" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" />
     <EntitySet Name="Notifications" EntityType="Self.Notifications" />
     <EntitySet Name="Panel" EntityType="Self.Panel" />

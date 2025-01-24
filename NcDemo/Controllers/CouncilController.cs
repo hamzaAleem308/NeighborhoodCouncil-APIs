@@ -196,6 +196,12 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "memberId is required.");
             }
 
+            var checkIfJoinedTwo = db.CouncilMembers.Where(c => c.Member_Id == int.Parse(memberId)).ToList();
+                if(checkIfJoinedTwo.Count > 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "You cannot Join More Than 2 Councils!");
+                }
+
             // Get other form data (e.g., Name and Description).
             var name = HttpContext.Current.Request.Params["Name"];
             var description = HttpContext.Current.Request.Params["Description"];
@@ -296,6 +302,12 @@ namespace NcDemo.Controllers
                 if (existingMember != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.Conflict, "You are already a part of this council");
+                }
+
+                var checkIfJoinedTwo = db.CouncilMembers.Where(c => c.Member_Id == memberId).ToList();
+                if (checkIfJoinedTwo.Count > 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "You cannot Join More Than 2 Councils!");
                 }
 
                 CouncilMembers councilMember = new CouncilMembers

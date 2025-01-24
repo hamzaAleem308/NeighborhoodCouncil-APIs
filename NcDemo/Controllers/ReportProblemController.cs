@@ -106,7 +106,12 @@ namespace NcDemo.Controllers
                                        VisualEvidence = problem.VisualEvidence,
                                        MemberId = problemInfo.Member_id,
                                        CouncilId = problemInfo.Council_id,
-                                       SolverId = problem.solver_id
+                                       SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
+                                       SolverRole = db.CouncilMembers
+                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
+                                                {
+                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
+                                                })
                                    }).ToList();
 
                 // Perform transformations in memory
@@ -124,7 +129,8 @@ namespace NcDemo.Controllers
                         : null,
                     problem.MemberId,
                     problem.CouncilId,
-                    problem.SolverId
+                    problem.SolverId,
+                    problem.SolverRole
                 }).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
@@ -137,7 +143,7 @@ namespace NcDemo.Controllers
 
 
         [HttpGet]
-        public HttpResponseMessage GetReportedProblemByMember(int councilId, int memberId)
+        public HttpResponseMessage GetReportedProblemForChairman(int councilId, string status)
         {
             try
             {
@@ -145,7 +151,7 @@ namespace NcDemo.Controllers
                 var rawProblems = (from problem in db.Report_Problem
                                    join problemInfo in db.Report_Problem_info
                                    on problem.id equals problemInfo.Report_Problem_id
-                                   where problemInfo.Council_id == councilId && problemInfo.Member_id == memberId
+                                   where problemInfo.Council_id == councilId && problem.Status == status
                                    select new
                                    {
                                        ProblemId = problem.id,
@@ -158,7 +164,12 @@ namespace NcDemo.Controllers
                                        VisualEvidence = problem.VisualEvidence,
                                        MemberId = problemInfo.Member_id,
                                        CouncilId = problemInfo.Council_id,
-                                       SolverId = problem.solver_id
+                                       SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
+                                       SolverRole =  db.CouncilMembers
+                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
+                                                {
+                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
+                                                })
                                    }).ToList();
 
                 // Perform transformations in memory
@@ -176,7 +187,126 @@ namespace NcDemo.Controllers
                         : null,
                     problem.MemberId,
                     problem.CouncilId,
-                    problem.SolverId
+                    problem.SolverId,
+                    problem.SolverRole
+                }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetReportedProblemForPanel(int councilId, int solverId, string status)
+        {
+            try
+            {
+                // Fetch raw data from the database
+                var rawProblems = (from problem in db.Report_Problem
+                                   join problemInfo in db.Report_Problem_info
+                                   on problem.id equals problemInfo.Report_Problem_id
+                                   where problemInfo.Council_id == councilId && 
+                                   problem.Status == status &&
+                                   problem.solver_id == solverId
+                                   select new
+                                   {
+                                       ProblemId = problem.id,
+                                       Title = problem.title,
+                                       Description = problem.Description,
+                                       Status = problem.Status,
+                                       ProblemType = problem.ProblemType,
+                                       Category = problem.Category,
+                                       CreatedAt = problem.CreatedAt,
+                                       VisualEvidence = problem.VisualEvidence,
+                                       MemberId = problemInfo.Member_id,
+                                       CouncilId = problemInfo.Council_id,
+                                       SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
+                                       SolverRole = db.CouncilMembers
+                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
+                                                {
+                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
+                                                })
+                                   }).ToList();
+
+                // Perform transformations in memory
+                var transformedProblems = rawProblems.Select(problem => new
+                {
+                    problem.ProblemId,
+                    problem.Title,
+                    problem.Description,
+                    problem.Status,
+                    problem.ProblemType,
+                    problem.Category,
+                    problem.CreatedAt,
+                    VisualEvidence = !string.IsNullOrEmpty(problem.VisualEvidence)
+                        ? (problem.VisualEvidence)
+                        : null,
+                    problem.MemberId,
+                    problem.CouncilId,
+                    problem.SolverId,
+                    problem.SolverRole
+                }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetReportedProblemByStatus(int councilId, int memberId, string status)
+        {
+            try
+            {
+                // Fetch raw data from the database
+                var rawProblems = (from problem in db.Report_Problem
+                                   join problemInfo in db.Report_Problem_info
+                                   on problem.id equals problemInfo.Report_Problem_id
+                                   where problemInfo.Council_id == councilId && 
+                                   problemInfo.Member_id == memberId && 
+                                   problem.Status == status
+                                   select new
+                                   {
+                                       ProblemId = problem.id,
+                                       Title = problem.title,
+                                       Description = problem.Description,
+                                       Status = problem.Status,
+                                       ProblemType = problem.ProblemType,
+                                       Category = problem.Category,
+                                       CreatedAt = problem.CreatedAt,
+                                       VisualEvidence = problem.VisualEvidence,
+                                       MemberId = problemInfo.Member_id,
+                                       CouncilId = problemInfo.Council_id,
+                                       SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
+                                       SolverRole = db.CouncilMembers
+                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
+                                                {
+                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
+                                                })
+                                   }).ToList();
+
+                // Perform transformations in memory
+                var transformedProblems = rawProblems.Select(problem => new
+                {
+                    problem.ProblemId,
+                    problem.Title,
+                    problem.Description,
+                    problem.Status,
+                    problem.ProblemType,
+                    problem.Category,
+                    problem.CreatedAt,
+                    VisualEvidence = !string.IsNullOrEmpty(problem.VisualEvidence)
+                        ? (problem.VisualEvidence)
+                        : null,
+                    problem.MemberId,
+                    problem.CouncilId,
+                    problem.SolverId,
+                    problem.SolverRole
                 }).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, transformedProblems);
@@ -222,6 +352,84 @@ namespace NcDemo.Controllers
             catch (Exception ee)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError , ee);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage getProblemStatusSummaryForCouncil(int councilId)
+        {
+
+            try
+            {
+                var problemSummary = (from rp in db.Report_Problem
+                                      join rpi in db.Report_Problem_info on rp.id equals rpi.Report_Problem_id
+                                      where rpi.Council_id == councilId
+                                      group rp by rp.Status into statusGroup
+                                      select new
+                                      {
+                                          Status = statusGroup.Key,
+                                          Count = statusGroup.Count()
+                                      })
+                                      .OrderBy(x => x.Status)
+                                      .ToList();
+
+                if (problemSummary == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Status Found");
+                }
+
+                var totalProblems = problemSummary.Sum(x => x.Count);
+
+                var response = new
+                {
+                    StatusCounts = problemSummary,
+                    Total = totalProblems
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage getProblemStatusSummaryForPanel(int councilId, int solverId)
+        {
+
+            try
+            {
+                var problemSummary = (from rp in db.Report_Problem
+                                      join rpi in db.Report_Problem_info on rp.id equals rpi.Report_Problem_id
+                                      where rpi.Council_id == councilId && rp.solver_id == solverId
+                                      group rp by rp.Status into statusGroup
+                                      select new
+                                      {
+                                          Status = statusGroup.Key,
+                                          Count = statusGroup.Count()
+                                      })
+                                      .OrderBy(x => x.Status)
+                                      .ToList();
+
+                if (problemSummary == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Status Found");
+                }
+
+                var totalProblems = problemSummary.Sum(x => x.Count);
+
+                var response = new
+                {
+                    StatusCounts = problemSummary,
+                    Total = totalProblems
+                };
+
+                return Request.CreateResponse(HttpStatusCode.OK, response);
+            }
+            catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
 
@@ -320,6 +528,7 @@ namespace NcDemo.Controllers
                 else
                 {
                     problem.Status = "Pending";
+                    problem.solver_id = 0;
                 }
                 var getCouncil = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId).Council_id;
 

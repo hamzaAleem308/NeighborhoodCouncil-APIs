@@ -122,6 +122,21 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Monthly_Contributions">
+      <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Monthly_Contributions">
+        <MappingFragment StoreEntitySet="Monthly_Contributions">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="council_id" ColumnName="council_id" />
+          <ScalarProperty Name="member_id" ColumnName="member_id" />
+          <ScalarProperty Name="month_year" ColumnName="month_year" />
+          <ScalarProperty Name="amount" ColumnName="amount" />
+          <ScalarProperty Name="status" ColumnName="status" />
+          <ScalarProperty Name="payment_date" ColumnName="payment_date" />
+          <ScalarProperty Name="created_at" ColumnName="created_at" />
+          <ScalarProperty Name="updated_at" ColumnName="updated_at" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Nomination">
       <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Nomination">
         <MappingFragment StoreEntitySet="Nomination">

@@ -111,6 +111,20 @@
     <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
     <Property Name="Date_joined" Type="date" Nullable="false" />
   </EntityType>
+  <EntityType Name="Monthly_Contributions">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="council_id" Type="int" />
+    <Property Name="member_id" Type="int" />
+    <Property Name="month_year" Type="varchar" MaxLength="7" />
+    <Property Name="amount" Type="decimal" Precision="10" Scale="2" />
+    <Property Name="status" Type="varchar" MaxLength="20" />
+    <Property Name="payment_date" Type="datetime" />
+    <Property Name="created_at" Type="datetime" />
+    <Property Name="updated_at" Type="datetime" />
+  </EntityType>
   <EntityType Name="Nomination">
     <Key>
       <PropertyRef Name="id" />
@@ -257,6 +271,7 @@
     <EntitySet Name="Meeting_Minutes" EntityType="Self.Meeting_Minutes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Meetings" EntityType="Self.Meetings" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Member" EntityType="Self.Member" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Monthly_Contributions" EntityType="Self.Monthly_Contributions" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Nomination" EntityType="Self.Nomination" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Notifications" EntityType="Self.Notifications" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />

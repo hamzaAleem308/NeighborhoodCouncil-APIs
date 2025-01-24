@@ -35,6 +35,7 @@ namespace NcDemo.Models
         public virtual DbSet<Meeting_Minutes> Meeting_Minutes { get; set; }
         public virtual DbSet<Meetings> Meetings { get; set; }
         public virtual DbSet<Member> Member { get; set; }
+        public virtual DbSet<Monthly_Contributions> Monthly_Contributions { get; set; }
         public virtual DbSet<Nomination> Nomination { get; set; }
         public virtual DbSet<Notifications> Notifications { get; set; }
         public virtual DbSet<Panel> Panel { get; set; }

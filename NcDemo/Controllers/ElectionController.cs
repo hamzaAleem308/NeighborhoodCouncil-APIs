@@ -480,24 +480,26 @@ namespace NcDemo.Controllers
 
                     // Step 2: Retrieve and validate votes with candidates
                     var topCandidatePanel = db.Votes
-                         .Where(v => v.Election_id == electionId) // Filter by election
-                         .GroupBy(v => v.Candidate_id) // Group by Candidate_id
-                         .Select(g => new
-                         {
-                             CandidateId = g.Key,
-                             VoteCount = g.Count() // Count votes
-                         })
-                         .OrderByDescending(c => c.VoteCount) // Sort by votes in descending order
-                         .Join(db.Candidates, // Join with Candidates table
-                               voteGroup => voteGroup.CandidateId,
-                               candidate => candidate.candidate_id,
-                               (voteGroup, candidate) => new
-                               {
-                                   CandidateId = voteGroup.CandidateId,
-                                   PanelId = candidate.panel_id,
-                                   VoteCount = voteGroup.VoteCount
-                               })
-                         .FirstOrDefault(); // Fetch the top candidate
+                          .Where(v => v.Election_id == electionId) // Filter by Election ID
+                          .GroupBy(v => v.Candidate_id) // Group votes by Candidate ID
+                          .Select(g => new
+                          {
+                              CandidateId = g.Key,
+                              VoteCount = g.Count() // Count the votes
+                          })
+                          .OrderByDescending(vc => vc.VoteCount) // Sort by VoteCount in descending order
+                          .Take(1) // Ensure only the top candidate is selected
+                          .Join(db.Candidates,
+                                vc => vc.CandidateId,
+                                c => c.candidate_id,
+                                (vc, c) => new
+                                {
+                                    CandidateId = vc.CandidateId,
+                                    PanelId = c.panel_id,
+                                    VoteCount = vc.VoteCount
+                                })
+                          .FirstOrDefault(); // Fetch the top candidate
+
 
                     if (topCandidatePanel == null)
                         return Request.CreateResponse(HttpStatusCode.BadRequest, "No valid candidates or votes found for this election");
@@ -583,11 +585,24 @@ namespace NcDemo.Controllers
 
                     // Step 8: Close the election
                     election.status = "Closed";
+
+                    //Step 9: Delete current Candidates.
+                    var electionCandidate = db.Candidates.Where(c => c.council_id == councilId).ToList();
+                    db.Candidates.RemoveRange(electionCandidate);
+                    //Step 10: Delete Panel ref to CouncilId
+                    var electionPanel = db.Panel.Where(p => p.council_Id == councilId).ToList();
+                    db.Panel.RemoveRange(electionPanel);
+                    //Step 11: Delete Panel Member ref to Panel
+                    foreach (var panelMember in electionPanel)
+                    {
+                        var panelMember1 = db.PanelMembers.Where(pm => pm.Panel_Id == panelMember.id);
+                        db.PanelMembers.RemoveRange(panelMember1);
+                    }
+
                     db.SaveChanges();
 
                     transaction.Commit();
-
-                    // Step 9: Return winner details
+                    // Step 12: Return winner details
                     var result = new
                     {
                         WinnerId = winnerMemberId,
@@ -595,7 +610,6 @@ namespace NcDemo.Controllers
                         Role = chairmanRole.Role_Name,
                         TotalVotes = topCandidatePanel.VoteCount
                     };
-
                     return Request.CreateResponse(HttpStatusCode.OK, result);
                 }
                 catch (Exception ex)
