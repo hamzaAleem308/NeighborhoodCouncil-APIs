@@ -13,18 +13,26 @@ namespace NcDemo.Controllers
         NeighborhoodCouncilEntities db = new NeighborhoodCouncilEntities();
 
         [HttpGet]
-        public HttpResponseMessage GetNotifications(int? councilId, int? memberId = null)
+        public HttpResponseMessage GetNotifications(int councilId, int? memberId)
         {
             try
             {
-                // Fetch notifications filtered by councilId and optionally by memberId
-                var notificationsQuery = db.Notifications.Where(n => n.council_id == councilId);
-
-                if (memberId.HasValue)
+                // Validate the input councilId
+                if (councilId <= 0)
                 {
-                    notificationsQuery = notificationsQuery.Where(n => n.member_id == memberId.Value || n.member_id == null);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid councilId provided.");
                 }
 
+                // Fetch notifications filtered by councilId
+                var notificationsQuery = db.Notifications.Where(n => n.council_id == councilId);
+
+                // Include notifications specific to the memberId or with memberId as NULL
+                if (memberId.HasValue)
+                {
+                    notificationsQuery = notificationsQuery.Where(n => n.member_id == memberId || n.member_id == null);
+                }
+
+                // Fetch and prepare the result
                 var notifications = notificationsQuery
                     .OrderByDescending(n => n.created_at)
                     .Select(n => new
@@ -43,13 +51,22 @@ namespace NcDemo.Controllers
                     })
                     .ToList();
 
+                // Check if notifications exist
+                if (notifications.Count == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No notifications found.");
+                }
+
+                // Return the notifications
                 return Request.CreateResponse(HttpStatusCode.OK, notifications);
             }
             catch (Exception ex)
             {
+                // Handle any unexpected errors
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
             }
         }
+
 
     }
 }

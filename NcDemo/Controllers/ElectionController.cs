@@ -500,10 +500,10 @@ namespace NcDemo.Controllers
                                 })
                           .FirstOrDefault(); // Fetch the top candidate
 
-
                     if (topCandidatePanel == null)
                         return Request.CreateResponse(HttpStatusCode.BadRequest, "No valid candidates or votes found for this election");
 
+                    
                     // Step 3: Get the panel of the winning candidate
                     var panel = db.Panel.FirstOrDefault(t => t.id == topCandidatePanel.PanelId);
                     if (panel == null)

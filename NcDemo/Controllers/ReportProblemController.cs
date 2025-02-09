@@ -108,10 +108,9 @@ namespace NcDemo.Controllers
                                        CouncilId = problemInfo.Council_id,
                                        SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
                                        SolverRole = db.CouncilMembers
-                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
-                                                {
-                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
-                                                })
+                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == problemInfo.Council_id)
+                                            .Select(r => db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name)
+                                            .FirstOrDefault()?? "No Role Assigned" // Ensures only one role is returned
                                    }).ToList();
 
                 // Perform transformations in memory
@@ -165,12 +164,11 @@ namespace NcDemo.Controllers
                                        MemberId = problemInfo.Member_id,
                                        CouncilId = problemInfo.Council_id,
                                        SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
-                                       SolverRole =  db.CouncilMembers
-                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
-                                                {
-                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
-                                                })
-                                   }).ToList();
+                                       SolverRole = db.CouncilMembers
+                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == problemInfo.Council_id)
+                                            .Select(r => db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name)
+                                            .FirstOrDefault() ?? "No Role Assigned" // Ensures only one role is returned
+                                        }).ToList();
 
                 // Perform transformations in memory
                 var transformedProblems = rawProblems.Select(problem => new
@@ -225,11 +223,10 @@ namespace NcDemo.Controllers
                                        CouncilId = problemInfo.Council_id,
                                        SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
                                        SolverRole = db.CouncilMembers
-                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
-                                                {
-                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
-                                                })
-                                   }).ToList();
+                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == problemInfo.Council_id)
+                                            .Select(r => db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name)
+                                            .FirstOrDefault() ?? "No Role Assigned" // Ensures only one role is returned
+                                        }).ToList();
 
                 // Perform transformations in memory
                 var transformedProblems = rawProblems.Select(problem => new
@@ -284,11 +281,10 @@ namespace NcDemo.Controllers
                                        CouncilId = problemInfo.Council_id,
                                        SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
                                        SolverRole = db.CouncilMembers
-                                                .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId).Select(r => new
-                                                {
-                                                    role = db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name,
-                                                })
-                                   }).ToList();
+                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == problemInfo.Council_id)
+                                            .Select(r => db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name)
+                                            .FirstOrDefault() ?? "No Role Assigned" // Ensures only one role is returned
+                                            }).ToList();
 
                 // Perform transformations in memory
                 var transformedProblems = rawProblems.Select(problem => new
@@ -795,6 +791,171 @@ namespace NcDemo.Controllers
             catch(Exception ee)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+        [HttpPost]
+        //[Route("SolverComments/AddComment")]
+        public HttpResponseMessage AddSolverComment(SolverCommentDTO comment)
+        {
+            try
+            {
+                if (comment == null || string.IsNullOrWhiteSpace(comment.Comment) || string.IsNullOrWhiteSpace(comment.Status))
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid data.");
+                }
+
+                // Save to database
+                var newComment = new SolverComments
+                {
+                    Problem_id = comment.Problem_id,
+                    Solver_id = comment.Solver_id,
+                    Comment = comment.Comment,
+                    Status = comment.Status,
+                    CreatedAt = DateTime.Now
+                };
+                db.SolverComments.Add(newComment);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Comment added successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        // DTO Class
+        public class SolverCommentDTO
+        {
+            public int Problem_id { get; set; }
+            public int Solver_id { get; set; }
+            public string Comment { get; set; }
+            public string Status { get; set; }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetProblemWithSolverComments(int problemId)
+        {
+            try
+            {
+                // Fetch the raw problem details safely
+                var rawProblem = db.Report_Problem
+                    .Where(p => p.id == problemId)
+                    .Select(p => new
+                    {
+                        ProblemId = p.id,
+                        Title = p.title,
+                        Description = p.Description,
+                        Status = p.Status,
+                        Priority = p.Priority,
+                        ProblemType = p.ProblemType,
+                        Category = p.Category,
+                        CreatedAt = p.CreatedAt,
+                        SolverId = p.solver_id,
+                        VisualEvidence = p.VisualEvidence
+                    })
+                    .FirstOrDefault();
+
+                if (rawProblem == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new
+                    {
+                        Message = "Problem not found.",
+                        StatusCode = 404
+                    });
+                }
+
+                // Fetch related MemberId and CouncilId safely
+                var problemInfo = db.Report_Problem_info
+                    .Where(rpi => rpi.Report_Problem_id == problemId)
+                    .Select(rpi => new
+                    {
+                        rpi.Member_id,
+                        rpi.Council_id
+                    })
+                    .FirstOrDefault();
+
+                int councilId = problemInfo?.Council_id ?? 0;
+
+                // Fetch solver name safely
+                var solverName = rawProblem.SolverId.HasValue
+                    ? db.Member.Where(c => c.id == rawProblem.SolverId).Select(c => c.Full_Name).FirstOrDefault()
+                    : "No Name Assigned";
+
+                // Fetch solver role safely
+                var solverRole = rawProblem.SolverId.HasValue
+                    ? db.CouncilMembers
+                        .Where(c => c.Member_Id == rawProblem.SolverId && c.Council_Id == councilId)
+                        .Select(r => db.Role.Where(o => o.id == r.Role_Id).Select(o => o.Role_Name).FirstOrDefault())
+                        .FirstOrDefault()
+                    : "No Role Assigned";
+
+                // Fetch solver comments safely
+                var solverComments = db.SolverComments
+                    .Where(sc => sc.Problem_id == problemId)
+                    .Select(sc => new
+                    {
+                        CommentId = sc.id,
+                        SolverId = sc.Solver_id,
+                        Comment = sc.Comment,
+                        Status = sc.Status,
+                        CreatedAt = sc.CreatedAt,
+                        SolverName = db.Member
+                            .Where(c => c.id == sc.Solver_id)
+                            .Select(c => c.Full_Name)
+                            .FirstOrDefault() ?? "No Name Assigned",
+                        SolverRole = db.CouncilMembers
+                            .Where(c => c.Member_Id == sc.Solver_id && c.Council_Id == councilId)
+                            .Select(r => db.Role.Where(o => o.id == r.Role_Id).Select(o => o.Role_Name).FirstOrDefault())
+                            .FirstOrDefault() ?? "No Role Assigned"
+                    })
+                    .ToList();
+
+                // Transform the data with null checks
+                var transformedProblem = new
+                {
+                    rawProblem.ProblemId,
+                    rawProblem.Title,
+                    rawProblem.Description,
+                    rawProblem.Status,
+                    rawProblem.Priority,
+                    rawProblem.ProblemType,
+                    rawProblem.Category,
+                    rawProblem.CreatedAt,
+                    SolverId = rawProblem.SolverId ?? 0,
+                    SolverName = solverName,
+                    SolverRole = solverRole,
+                    VisualEvidence = !string.IsNullOrEmpty(rawProblem.VisualEvidence) ? rawProblem.VisualEvidence : null,
+                    MemberId = problemInfo?.Member_id ?? 0,
+                    CouncilId = councilId,
+                    SolverComments = solverComments.Select(sc => new
+                    {
+                        sc.CommentId,
+                        sc.SolverId,
+                        sc.Comment,
+                        sc.Status,
+                        sc.CreatedAt,
+                        sc.SolverName,
+                        sc.SolverRole
+                    }).ToList()
+                };
+
+                // Return the transformed data
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    Message = "Problem details with solver comments fetched successfully.",
+                    StatusCode = 200,
+                    Data = transformedProblem
+                });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Message = "An error occurred while fetching the problem details.",
+                    ExceptionMessage = ex.Message,
+                    StatusCode = 500
+                });
             }
         }
     }

@@ -1,15 +1,11 @@
-﻿using Microsoft.Ajax.Utilities;
-using NcDemo.Models;
+﻿using NcDemo.Models;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-using System.IO;
 using System.Web;
+using System.Web.Http;
 
 
 
@@ -174,11 +170,51 @@ namespace NcDemo.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, memberRole);
         }
-    
 
 
-     
-    [HttpPost]
+        /*[HttpPost]
+        public HttpResponseMessage PostCouncils(Council council, int memberId)
+        {
+            try
+            {
+                Council council1 = new Council()
+                {
+                    Name = council.Name,
+                    Description = council.Description,
+                    Date = DateTime.Now,
+                };
+                db.Council.Add(council1);
+                db.SaveChanges();
+
+                var setCode = db.Council.FirstOrDefault(cm => cm.id == council1.id);
+
+                if (setCode != null)
+                {
+                    setCode.JoinCode = CodeGenerator.GenerateJoinCode(council1.id);
+                }
+
+                CouncilMembers councilMember = new CouncilMembers
+                {
+                    Member_Id = memberId,
+                    Council_Id = council1.id,
+                    Role_Id = 1,   // Id: 1 == 'Admin'
+                    Panel_Id = 0,
+                };
+
+
+                db.CouncilMembers.Add(councilMember);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, council.Name + " Added Successfully!");
+            }
+            catch (Exception ex)
+            {
+
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }*/
+
+        [HttpPost]
     public HttpResponseMessage PostCouncils()
     {
         try
@@ -197,7 +233,7 @@ namespace NcDemo.Controllers
             }
 
             var checkIfJoinedTwo = db.CouncilMembers.Where(c => c.Member_Id == int.Parse(memberId)).ToList();
-                if(checkIfJoinedTwo.Count > 2)
+                if(checkIfJoinedTwo.Count >= 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "You cannot Join More Than 2 Councils!");
                 }
@@ -292,7 +328,7 @@ namespace NcDemo.Controllers
 
                 if (getCouncil == 0)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found with this Join Code");
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "No Council Found with this Join Code");
                 }
 
                 var existingMember = db.CouncilMembers
@@ -305,7 +341,7 @@ namespace NcDemo.Controllers
                 }
 
                 var checkIfJoinedTwo = db.CouncilMembers.Where(c => c.Member_Id == memberId).ToList();
-                if (checkIfJoinedTwo.Count > 2)
+                if (checkIfJoinedTwo.Count >= 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "You cannot Join More Than 2 Councils!");
                 }
@@ -500,6 +536,178 @@ namespace NcDemo.Controllers
             }
         }
 
+        [HttpDelete]
+        public HttpResponseMessage LeaveCouncil(int councilId, int memberId)
+        {
+            try {
+                var getCouncil = db.CouncilMembers.FirstOrDefault(c => c.Council_Id == councilId && c.Member_Id == memberId);
+                if(getCouncil == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, "NO Member Found For this Council");
+                }
+                string currentMonthYear = DateTime.Now.ToString("MM-yyyy");
 
+                var checkContribution = db.Monthly_Contributions.FirstOrDefault(m =>
+                    m.council_id == councilId &&
+                    m.member_id == memberId &&
+                    m.month_year == currentMonthYear
+                );
+
+                if (checkContribution != null && checkContribution.status == "Unpaid")
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "You have uncleared dues. Kindly pay them first!");
+                }
+
+                db.CouncilMembers.Remove(getCouncil);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Council left Successfully!");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An unexpected error occurred. Please try again later." +  ex);
+            }
+
+        }
+
+        [HttpPut]
+        public HttpResponseMessage SwitchCouncil(int OldCouncilId, int memberId, int NewCouncilId)
+        {
+            try
+            {
+                var getCouncil = db.CouncilMembers.FirstOrDefault(c => c.Council_Id == OldCouncilId && c.Member_Id == memberId);
+                if (getCouncil == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, "NO Member Found For this Council");
+                }
+                string currentMonthYear = DateTime.Now.ToString("MM-yyyy");
+
+                var checkContribution = db.Monthly_Contributions.FirstOrDefault(m =>
+                    m.council_id == OldCouncilId &&
+                    m.member_id == memberId &&
+                    m.month_year == currentMonthYear
+                );
+
+                if (checkContribution.status == "Unpaid")
+                {
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, "You have Uncleared Dues, Kindly Pay them First!");
+                }
+
+                db.CouncilMembers.Remove(getCouncil);
+
+                var newMember = new CouncilMembers {
+                    Council_Id = NewCouncilId,
+                    Member_Id = memberId,
+                    Role_Id = 2,
+                    Panel_Id = 0
+                };
+                db.CouncilMembers.Add(newMember);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Council Switched SuccessFully!");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetAllCouncils(int memberId)
+        {
+            try
+            {
+                // Fetch all councils from the database
+                var allCouncils = db.Council.ToList();
+
+                // Fetch the member's current council
+                /*var currentCouncil = db.CouncilMembers
+                    .Where(cm => cm.Member_Id == memberId)
+                    .Select(cm => cm.Council_Id)
+                    .FirstOrDefault();
+*/
+                if (!allCouncils.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No councils found.");
+                }
+
+                var result = allCouncils.Select(c => new
+                {
+                    c.id,
+                    c.Name,
+                    c.Description,
+                    c.Date,
+                    DisplayPictureUrl = c.DisplayPicture,
+                    //IsCurrent = c.id == currentCouncil
+                }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occurred: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public HttpResponseMessage SwitchCouncilUsingCode(int councilId, int memberId, string joinCode)
+        {
+            try
+            {
+                //Check If Code is Valid
+                var getCouncil = db.Council
+                    .Where(c => c.JoinCode.Equals(joinCode))
+                    .Select(c => c.id)
+                    .FirstOrDefault();
+
+                if (getCouncil == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Forbidden, "No Council Found with this Join Code");
+                }
+
+                //Check If Already part of Council
+                var existingMember = db.CouncilMembers
+                    .Where(cm => cm.Council_Id == getCouncil && cm.Member_Id == memberId)
+                    .FirstOrDefault();
+
+                if (existingMember != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "You are already a part of this council");
+                }
+
+                var getExistingCouncil = db.CouncilMembers.FirstOrDefault(c => c.Council_Id == councilId && c.Member_Id == memberId);
+                
+                // Delete Old Council
+                if (getExistingCouncil == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No Member Found For this Council");
+                }
+                db.CouncilMembers.Remove(getExistingCouncil);
+
+                //Check if part of 2 councils already
+                /*var checkIfJoinedTwo = db.CouncilMembers.Where(c => c.Member_Id == memberId).ToList();
+                if (checkIfJoinedTwo.Count > 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "You cannot Join More Than 2 Councils!");
+                }*/
+
+                CouncilMembers councilMember = new CouncilMembers
+                {
+                    Member_Id = memberId,
+                    Council_Id = getCouncil,
+                    Role_Id = 2,   // Id: 2 == 'Member'
+                    Panel_Id = 0,
+                };
+
+                db.CouncilMembers.Add(councilMember);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Council Joined Successfully");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
     }
 }
