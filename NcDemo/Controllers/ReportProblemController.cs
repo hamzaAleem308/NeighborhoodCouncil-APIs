@@ -165,10 +165,10 @@ namespace NcDemo.Controllers
                                        CouncilId = problemInfo.Council_id,
                                        SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
                                        SolverRole = db.CouncilMembers
-                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == problemInfo.Council_id)
-                                            .Select(r => db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name)
-                                            .FirstOrDefault() ?? "No Role Assigned" // Ensures only one role is returned
-                                        }).ToList();
+                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == councilId)
+                                            .Select(r => db.Role.Where(o => o.id == r.Role_Id).Select(o => o.Role_Name).FirstOrDefault())
+                                            .FirstOrDefault() ?? "No Role Assigned"
+                                   }).ToList();
 
                 // Perform transformations in memory
                 var transformedProblems = rawProblems.Select(problem => new
@@ -223,10 +223,10 @@ namespace NcDemo.Controllers
                                        CouncilId = problemInfo.Council_id,
                                        SolverId = db.Member.FirstOrDefault(c => c.id == problem.solver_id).Full_Name,
                                        SolverRole = db.CouncilMembers
-                                            .Where(c => c.Member_Id == problem.solver_id && c.Council_Id == problemInfo.Council_id)
-                                            .Select(r => db.Role.FirstOrDefault(o => o.id == r.Role_Id).Role_Name)
-                                            .FirstOrDefault() ?? "No Role Assigned" // Ensures only one role is returned
-                                        }).ToList();
+                                        .Where(c => c.Member_Id == solverId && c.Council_Id == councilId)
+                                        .Select(r => db.Role.Where(o => o.id == r.Role_Id).Select(o => o.Role_Name).FirstOrDefault())
+                                        .FirstOrDefault() ?? "No Role Assigned"
+                                   }).ToList();
 
                 // Perform transformations in memory
                 var transformedProblems = rawProblems.Select(problem => new
@@ -508,8 +508,8 @@ namespace NcDemo.Controllers
             }
         }
 
-        [HttpPost]
-        public HttpResponseMessage SetProblemSatisfiedOrUnsatisfied(int problemId, string status)
+        /*[HttpPost]
+        public HttpResponseMessage SetProblemSatisfiedOrUnsatisfied(int problemId, string status, string comments)
         {
             try
             {
@@ -536,7 +536,7 @@ namespace NcDemo.Controllers
                 if (getCouncil == 0)
                     return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found For Problem");
 
-                /*var notify = new Notifications
+                *//*var notify = new Notifications
                 {
                     council_id = getCouncil,
                     member_id = getMember,
@@ -545,7 +545,7 @@ namespace NcDemo.Controllers
                     module = "ReportProblem",
                     created_at = DateTime.Now,
                     updated_at = DateTime.Now,
-                };*/
+                };*//*
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Status Set As per the Satisfaction Level!");
 
@@ -553,6 +553,64 @@ namespace NcDemo.Controllers
            catch(Exception ee)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }*/
+        [HttpPost]
+        public HttpResponseMessage SetProblemSatisfiedOrUnsatisfied(int problemId, string status, string comments = null)
+        {
+            try
+            {
+                var problem = db.Report_Problem.Find(problemId);
+                if (problem == null)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Found");
+
+                // Fetch Member & Council from Report_Problem_info
+                var problemInfo = db.Report_Problem_info.FirstOrDefault(c => c.Report_Problem_id == problemId);
+                if (problemInfo == null)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Problem Info Found");
+
+                var memberId = problemInfo.Member_id;
+                var councilId = problemInfo.Council_id;
+
+                if (memberId == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Member Found For Problem");
+
+                if (councilId == 0)
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Council Found For Problem");
+
+                // Update problem status based on feedback
+                if (status == "Satisfied")
+                {
+                    problem.Status = "Completed";
+                }
+                else
+                {
+                    problem.Status = "Pending";
+                    problem.solver_id = 0; // Reset solver so the issue can be reassigned
+                }
+
+                // Add feedback to the Feedback table
+                var feedback = new Feedback
+                {
+                    Problem_id = problemId,
+                    Member_id = memberId,
+                    FeedbackStatus = status,
+                    Comment = string.IsNullOrEmpty(comments) ? null : comments, // Store only if provided
+                    CreatedAt = DateTime.Now
+                };
+
+                db.Feedback.Add(feedback);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Feedback recorded and status updated successfully!");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new
+                {
+                    Message = "An error occurred while processing the request.",
+                    Exception = ex.Message
+                });
             }
         }
 
@@ -911,6 +969,33 @@ namespace NcDemo.Controllers
                     })
                     .ToList();
 
+                // Fetch Feedback of The one who reported the issue
+                var problemFeedbackList = db.Feedback
+                    .Where(f => f.Problem_id == problemId)
+                    .Select(f => new
+                    {
+                        FeedbackId = f.id,
+                        MemberId = f.Member_id,
+                        FeedbackComments = f.Comment ?? "No Comments Added",
+                        Status = f.FeedbackStatus,
+                        FeedbackDate = f.CreatedAt,
+                        AddedBy = db.Member
+                            .Where(c => c.id == f.Member_id)
+                            .Select(c => c.Full_Name)
+                            .FirstOrDefault() ?? "No Name Assigned",
+                        Role = db.CouncilMembers
+                            .Where(c => c.Member_Id == f.Member_id && c.Council_Id == councilId)
+                            .Select(r => db.Role
+                                .Where(o => o.id == r.Role_Id)
+                                .Select(o => o.Role_Name)
+                                .FirstOrDefault())
+                            .FirstOrDefault() ?? "No Role Assigned"
+                    })
+                    .ToList();
+
+                // Nullify feedback if empty instead of returning an empty list
+                var problemFeedback = problemFeedbackList.Any() ? problemFeedbackList : null;
+
                 // Transform the data with null checks
                 var transformedProblem = new
                 {
@@ -937,7 +1022,9 @@ namespace NcDemo.Controllers
                         sc.CreatedAt,
                         sc.SolverName,
                         sc.SolverRole
-                    }).ToList()
+                    }).ToList(), // Null if no solver comments
+
+                    FeedBackComments = problemFeedback // Will be null if no feedback exists
                 };
 
                 // Return the transformed data

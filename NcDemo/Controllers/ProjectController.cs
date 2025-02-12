@@ -79,11 +79,38 @@ namespace NcDemo.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, projects);
             }
-            catch(Exception ee)
+            catch (Exception ee)
             {
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
             }
         }
+
+        [HttpGet]
+        public HttpResponseMessage ShowProjectsWithLikes(int councilId)
+        {
+            try
+            {
+                var projects = db.Projects.Where(x => x.council_id == councilId).ToList();
+
+                if (projects == null || projects.Count == 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NoContent, "No Projects Found");
+                }
+
+                var projectList = projects.Select(p => new
+                {
+                    Project = p,
+                    LikesCount = db.Project_Likes.Count(like => like.project_id == p.id && like.like_status == true)
+                }).ToList();
+
+                return Request.CreateResponse(HttpStatusCode.OK, projectList);
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
 
         [HttpPost]
         public HttpResponseMessage AddProjectLogsById(int projectId, Project_Logs Logs)
@@ -154,5 +181,49 @@ namespace NcDemo.Controllers
             }
         }
 
+        [HttpPost]
+        public HttpResponseMessage LikeProject(int projectId, int memberId)
+        {
+            try
+            {
+                var project = db.Projects.Find(projectId);
+                if (project == null)
+                    return Request.CreateResponse(HttpStatusCode.NotFound, "Project not found.");
+
+                var existingLike = db.Project_Likes.FirstOrDefault(l => l.project_id == projectId && l.member_id == memberId);
+                if (existingLike != null)
+                    return Request.CreateResponse(HttpStatusCode.Conflict, "You already liked this project.");
+
+                var like = new Project_Likes
+                {
+                    project_id = projectId,
+                    member_id = memberId,
+                    like_date = DateTime.Now,
+                    like_status = true
+                };
+
+                db.Project_Likes.Add(like);
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, "Project liked successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        public HttpResponseMessage GetProjectLikes(int projectId)
+        {
+            try {
+                int likeCount = db.Project_Likes.Count(l => l.project_id == projectId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { ProjectId = projectId, LikeCount = likeCount });
+            }
+            catch(Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
     }
 }

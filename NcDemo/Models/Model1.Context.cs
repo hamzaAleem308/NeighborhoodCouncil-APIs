@@ -41,6 +41,7 @@ namespace NcDemo.Models
         public virtual DbSet<Panel> Panel { get; set; }
         public virtual DbSet<PanelMembers> PanelMembers { get; set; }
         public virtual DbSet<Problems_History> Problems_History { get; set; }
+        public virtual DbSet<Project_Likes> Project_Likes { get; set; }
         public virtual DbSet<Project_Logs> Project_Logs { get; set; }
         public virtual DbSet<Projects> Projects { get; set; }
         public virtual DbSet<Report_Problem> Report_Problem { get; set; }

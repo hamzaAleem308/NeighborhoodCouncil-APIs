@@ -177,6 +177,16 @@
     <Property Name="Status" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
     <Property Name="Problem_id" Type="Int32" />
   </EntityType>
+  <EntityType Name="Project_Likes">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="project_id" Type="Int32" Nullable="false" />
+    <Property Name="member_id" Type="Int32" Nullable="false" />
+    <Property Name="like_status" Type="Boolean" Nullable="false" />
+    <Property Name="like_date" Type="DateTime" Precision="3" />
+  </EntityType>
   <EntityType Name="Project_Logs">
     <Key>
       <PropertyRef Name="id" />
@@ -277,6 +287,7 @@
     <EntitySet Name="Panel" EntityType="Self.Panel" />
     <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" />
+    <EntitySet Name="Project_Likes" EntityType="Self.Project_Likes" />
     <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" />
     <EntitySet Name="Projects" EntityType="Self.Projects" />
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />

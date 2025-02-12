@@ -177,6 +177,16 @@
     <Property Name="Status" Type="nvarchar" MaxLength="30" />
     <Property Name="Problem_id" Type="int" />
   </EntityType>
+  <EntityType Name="Project_Likes">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="project_id" Type="int" Nullable="false" />
+    <Property Name="member_id" Type="int" Nullable="false" />
+    <Property Name="like_status" Type="bit" Nullable="false" />
+    <Property Name="like_date" Type="datetime" />
+  </EntityType>
   <EntityType Name="Project_Logs">
     <Key>
       <PropertyRef Name="id" />
@@ -277,6 +287,7 @@
     <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Project_Likes" EntityType="Self.Project_Likes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />

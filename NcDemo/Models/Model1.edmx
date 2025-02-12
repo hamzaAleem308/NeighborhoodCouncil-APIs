@@ -182,6 +182,16 @@
           <Property Name="Status" Type="nvarchar" MaxLength="30" />
           <Property Name="Problem_id" Type="int" />
         </EntityType>
+        <EntityType Name="Project_Likes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="project_id" Type="int" Nullable="false" />
+          <Property Name="member_id" Type="int" Nullable="false" />
+          <Property Name="like_status" Type="bit" Nullable="false" />
+          <Property Name="like_date" Type="datetime" />
+        </EntityType>
         <EntityType Name="Project_Logs">
           <Key>
             <PropertyRef Name="id" />
@@ -282,6 +292,7 @@
           <EntitySet Name="Panel" EntityType="Self.Panel" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Problems_History" EntityType="Self.Problems_History" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Project_Likes" EntityType="Self.Project_Likes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Projects" EntityType="Self.Projects" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" Schema="dbo" store:Type="Tables" />
@@ -472,6 +483,16 @@
           <Property Name="Status" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="Problem_id" Type="Int32" />
         </EntityType>
+        <EntityType Name="Project_Likes">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="project_id" Type="Int32" Nullable="false" />
+          <Property Name="member_id" Type="Int32" Nullable="false" />
+          <Property Name="like_status" Type="Boolean" Nullable="false" />
+          <Property Name="like_date" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="Project_Logs">
           <Key>
             <PropertyRef Name="id" />
@@ -572,6 +593,7 @@
           <EntitySet Name="Panel" EntityType="Self.Panel" />
           <EntitySet Name="PanelMembers" EntityType="Self.PanelMembers" />
           <EntitySet Name="Problems_History" EntityType="Self.Problems_History" />
+          <EntitySet Name="Project_Likes" EntityType="Self.Project_Likes" />
           <EntitySet Name="Project_Logs" EntityType="Self.Project_Logs" />
           <EntitySet Name="Projects" EntityType="Self.Projects" />
           <EntitySet Name="Report_Problem" EntityType="Self.Report_Problem" />
@@ -776,6 +798,17 @@
                 <ScalarProperty Name="id" ColumnName="id" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Problem_id" ColumnName="Problem_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Project_Likes">
+            <EntityTypeMapping TypeName="NeighborhoodCouncilModel.Project_Likes">
+              <MappingFragment StoreEntitySet="Project_Likes">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="project_id" ColumnName="project_id" />
+                <ScalarProperty Name="member_id" ColumnName="member_id" />
+                <ScalarProperty Name="like_status" ColumnName="like_status" />
+                <ScalarProperty Name="like_date" ColumnName="like_date" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

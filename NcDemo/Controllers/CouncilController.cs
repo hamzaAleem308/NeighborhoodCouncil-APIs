@@ -571,6 +571,44 @@ namespace NcDemo.Controllers
         }
 
         [HttpPut]
+        public HttpResponseMessage UpdateCouncil(int councilId, [FromBody] CouncilUpdateDto updatedCouncil)
+        {
+            try
+            {
+                if (updatedCouncil == null || string.IsNullOrWhiteSpace(updatedCouncil.Name))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { message = "Invalid data. Name is required." });
+                }
+
+                var council = db.Council.FirstOrDefault(c => c.id == councilId);
+                if (council == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, new { message = "Council not found." });
+                }
+
+                // Update only Name and Description
+                council.Name = updatedCouncil.Name;
+                council.Description = updatedCouncil.Description;
+
+                db.SaveChanges();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { message = "Council updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { message = "An error occurred.", error = ex.Message });
+            }
+        }
+
+        // DTO to restrict updating other fields
+        public class CouncilUpdateDto
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+        }
+
+
+        [HttpPut]
         public HttpResponseMessage SwitchCouncil(int OldCouncilId, int memberId, int NewCouncilId)
         {
             try

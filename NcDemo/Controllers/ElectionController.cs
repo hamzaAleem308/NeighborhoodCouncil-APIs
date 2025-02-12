@@ -46,17 +46,79 @@ namespace NcDemo.Controllers
             }
         }
 
+        [HttpGet]
+        public HttpResponseMessage SetPanelMembersToMember(int councilId)
+        {
+            try
+            {
+                // Get the last closed election
+                var lastClosedElection = db.Elections
+                    .Where(e => e.Council_id == councilId && e.status == "Closed")
+                    .OrderByDescending(e => e.EndDate)
+                    .FirstOrDefault();
+
+                if (lastClosedElection != null)
+                {
+                    // Add 2 months to the last closed election's EndDate
+                    DateTime nextEligibleDate = lastClosedElection.EndDate.Value.AddMonths(2);
+                    if (DateTime.Now < nextEligibleDate)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"New election can only be initiated after {nextEligibleDate:yyyy-MM-dd}");
+                    }
+                }
+                else
+                {
+                    // Change PanelMembers To Simple Members
+                    var councilMembers = db.CouncilMembers.Where(cm => cm.Council_Id == councilId).ToList();
+                    if (councilMembers == null)
+                        return Request.CreateResponse(HttpStatusCode.NoContent, "No member Found for this Council");
+                    foreach(var c in councilMembers)
+                    {
+                        // Set to Member
+                        if (c.Role_Id != 1)
+                        {
+                            c.Role_Id = 2;
+                        }
+                    }
+                    db.SaveChanges();
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, "Panel Member Successfully Changed to Member!");
+            }
+            catch (Exception ee)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, ee);
+            }
+        }
+
         [HttpPost]
         public HttpResponseMessage InitiateElection(Elections elect)
         {
             try
             {
-                var ifElectionExists = db.Elections.FirstOrDefault(e => e.Council_id == elect.Council_id && e.status != "Closed");
-
-                if (ifElectionExists != null)
+                // Check if there's an active election
+                var activeElection = db.Elections.FirstOrDefault(e => e.Council_id == elect.Council_id && e.status != "Closed");
+                if (activeElection != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.Found, "Election Already Exists, close the Previous Election First");
+                    return Request.CreateResponse(HttpStatusCode.Found, "Election already exists, close the previous election first.");
                 }
+
+                // Get the last closed election
+                var lastClosedElection = db.Elections
+                    .Where(e => e.Council_id == elect.Council_id && e.status == "Closed")
+                    .OrderByDescending(e => e.EndDate)
+                    .FirstOrDefault();
+
+                if (lastClosedElection != null)
+                {
+                    // Add 2 months to the last closed election's EndDate
+                    DateTime nextEligibleDate = lastClosedElection.EndDate.Value.AddMonths(2);
+                    if (DateTime.Now < nextEligibleDate)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, $"New election can only be initiated after {nextEligibleDate:yyyy-MM-dd}");
+                    }
+                }
+
+                // Create and initiate the new election
                 var election = new Elections
                 {
                     Name = elect.Name,
@@ -66,7 +128,8 @@ namespace NcDemo.Controllers
                     Council_id = elect.Council_id,
                 };
                 db.Elections.Add(election);
-                
+
+                // Add a notification
                 var notify = new Notifications
                 {
                     council_id = (int)elect.Council_id,
@@ -74,9 +137,9 @@ namespace NcDemo.Controllers
                     message = $"{elect.StartDate} to {elect.EndDate}",
                     module = "Election",
                     created_at = DateTime.Now,
-                    
                 };
                 db.Notifications.Add(notify);
+
                 db.SaveChanges();
                 return Request.CreateResponse(HttpStatusCode.OK, "Election initiated successfully.");
             }
@@ -85,6 +148,7 @@ namespace NcDemo.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
+
 
         [HttpPost]
         public HttpResponseMessage NominateCandidateForPanel([FromBody] NominateCandidateRequest request)
@@ -619,9 +683,6 @@ namespace NcDemo.Controllers
                 }
             }
         }
-
-
-
 
         [HttpGet]
         public HttpResponseMessage GetElectionWithVotes(int councilId)
